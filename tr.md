@@ -21,8 +21,11 @@ $$
 % Transpose
 \newcommand{\T}{^\intercal}
 
-%Exponential-family distribution
+% Exponential-family distribution
 \newcommand{\expfam}[1]{ \text{ExpFam} ({#1}) }
+
+% KL divergence
+\newcommand{\KL}[2]{\text{KL}\left[\, {#1}  \,||\, {#2} \,\right]}
 
 \newcommand{\bmu}{\boldsymbol\mu}
 \newcommand{\balpha}{\boldsymbol\alpha}
@@ -32,6 +35,7 @@ $$
 \newcommand{EP}{\text{EP}}
 
 \normal{1}{2}, \Normal{1}{2}{2}, \data, \outcome, \balpha, \bbeta, \bepsilon, \expfam{1}, \, \Pr{a=0}, \Ind{x>0}
+\KL{p(x)}{q(x)}
 $$
 
 ## Abstract
@@ -85,7 +89,7 @@ g(\mathrm E[y|z]) = z
 $$
 Fig. 1 shows the corresponding Graphical Model:
 
-<img src="model graph.jpg" alt="model graph" style="width: 200px;"/>
+<img src="img/model-graph.jpg" alt="model graph" style="width: 200px;"/>
 
 Therefore the user is free to choose the distribution that represent the observed process, as long as it can be completly defined by specifying its mean.
 
@@ -109,10 +113,8 @@ $$
 $$
 This class of distributions has the following two properties (McCullagh89):
 $$
-
 \mathrm E[y|\theta] = f'_b(\theta)\\
 \mathrm V[y|\theta] = f''_b(\theta) f_a(\phi) \tag{1}
-
 $$
 
 ### Generalised linear mixed models
@@ -228,28 +230,30 @@ I think we should discuss the methods out there, including the Monte Carlo ones.
 
 EP is a deterministic method for approximating probability distributions in order to solve complicated integrals as the one define in Eq. (5). Here EP will replace a given likelihood p(y|z) from some exponential-family distribution by a non-normalized univariate Normal p.d.f
 $$
-p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
+p(y|z)_{\EP} = \tilde c \Normal{z}{\tilde \mu}{\tilde \sigma^2}
 $$
 
 Of course, our problem requires many likelihoods (potentially defined by heterogenous distributions) together with a multivariate Normal distribution (Eqs. (3-4)). For convenience, let us define $\mathbf m = \mathrm A\T \balpha$ and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I$. The EP approximation for our scenario is given by
 $$
-p(\mathbf y) = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
+p(\mathbf y)_{\EP} = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
 $$
-where $\tilde \theta_i = \{\tilde z_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
+where $\tilde \theta_i = \{\tilde c_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
 
 Cavity distribution is defined by
 $$
-p_{-i}(z_i|\mathbf y) = \Normal{z_i}{\mu_i}{\sigma^2_i} \prod_{j\neq i} p(y_j|z_j)
+p_{-i}(z_i|\mathbf y)_{\EP} = \Normal{z_i}{\mathbf m_i}{\mathrm K_{i,i}} \prod_{j\neq i} p(y_j|z_j)_{\EP}
 $$
-and used into the minimization of the Kullback–Leibler divergence
+and used into the minimization of the Kullback–Leibler divergence (refer to Section REF)
 $$
-\mathrm{KL}[ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} || p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}]
+\KL{p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP}}{p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}}
 $$
-The minimum of that divergence will provide an update for the values of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
+The minimum of that divergence will provide an update for the values of $\tilde c_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
 $$
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
 $$
 where $\bmu = \Sigma(\mathrm K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ and $\Sigma=(\mathrm K^{-1} + \tilde\Sigma^{-1})^{-1}$.
+
+
 
 The EP marginal log-likelihood is found by integrating $\mathbf z$ out of $p(\mathbf y, \mathbf z)_{\EP}$ which gives us
 $$
@@ -304,6 +308,13 @@ $$
 \bmu = \Sigma (\mathrm K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
 $$
 
+### KL divergence
+
+bla
+$$
+\KL{p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP}}{p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}}
+$$
+
 ### Numerical integration
 
 We want to compute
@@ -352,9 +363,41 @@ where the parameters of p(y)null and p(y)alt are given by (βˆnull, σˆg2null,
 
 
 
+## Proofs
+
+$$
+\newcommand{A}{\mathbf A}\newcommand{BB}{\mathbf B}\newcommand{a}{\mathbf a}\newcommand{bb}{\mathbf b}
+\newcommand{x}{\mathbf x}
+\Normal{1}{2}{3}
+$$
 
 
 
+Let $\sigma_i^2 = \Sigma_{i,i}$. The EP marginal cavity probability is given by
+$$
+\sigma_i^2 = \Sigma_{i,i}
+$$
+
+$$
+p_{-i}(z_i|\mathbf y) \propto \Normal{z_i}{\mu_{-i}}{\sigma_{-i}^2},\\
+    	\text{where } \mu_{-i} = \sigma_{-i}^2 (\sigma^{-2}_i \mu_i - \tilde\sigma_i^{-2} \tilde\mu_i)
+    	\text{ and } \sigma_{-i}^2 = (\sigma_i^{-2} - \tilde\sigma_i^{-2})^{-1}
+$$
+
+*Proof.* Note that
+$$
+p_{-i}(z_i|\mathbf y) = \int p(\mathbf z|\mathbf y)_{\EP} \frac{p(\mathbf y)_{\EP}}{p(y_i|z_i)_{\EP}} \mathrm dz_{-i}
+        = p(\mathbf y)_{\EP} \frac{p(z_i|\mathbf y)_{\EP}}{p(y_i|z_i)_{\EP}}\\
+        \propto \frac{\Normal{z_i}{\mu_i}{\sigma_i^2}}{\Normal{z_i}{\tilde \mu_i}{\tilde \sigma_i^2}}.
+$$
+Using Lemma 1 we have
+$$
+\Normal{z_i}{\sigma_{-i}}{\sigma_{-i}^2} \Normal{z_i}{\tilde \mu_i}{\tilde \sigma_i^2}
+        \propto \Normal{z_i}{(\sigma_{-i}^{-2}+\tilde \sigma_i^{-2})^{-1}(\sigma_{-i}^{-2}\mu_{-i} + \tilde \sigma_i^{-2}\tilde \mu_i)}{(\sigma_{-i}^{-2}+\tilde \sigma_i^{-2})^{-1}} \\
+        = \Normal{z_i}{\sigma_i^2(\sigma_{-i}^{-2}\mu_{-i} + \tilde \sigma_i^{-2}\tilde \mu_i)}{\sigma_i^2} \\
+        = \Normal{z_i}{\sigma_i^2(\sigma_{-i}^{-2} \sigma_{-i}^2 (\sigma_i^{-2}\mu_i - \tilde \sigma_i^{-2} \tilde \mu_i) + \tilde \sigma_i^{-2}\tilde \mu_i)}{\sigma_i^2} \\
+        = \Normal{z_i}{\mu_i}{\sigma_i^2}.
+$$
 
 ## Bibliography
 
@@ -363,6 +406,8 @@ FALCONER, D.S., 1965. The inheritance of liability to certain diseases, estimate
 Lee, S.H. et al., 2011. Estimating Missing Heritability for Disease from Genome-wide Association Studies. The American Journal of Human Genetics, 88(3), pp.294–305. Available at: http://www.cell.com/ajhg/abstract/S0002-9297(11)00020-6.	
 
 McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models , Chapman & Hall / CRC , London.
+
+
 
 ## Appendix
 
