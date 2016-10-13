@@ -48,7 +48,7 @@ To address this, we here propose a highly effective deterministic algorithm QEP-
 
 ## Introduction
 
-We aim to unify commonly performed analysis in the genetic analysis community such as heritability estimation, genome-wide association studies, phenotype prediction in a broad sense (e.g., disease risk prediction), variance decomposition, accounting for population structure and family relatedness, regressing out instrumental noise, and many others, in the sense that heteregenous traits from many different sorts of stochastic nature could be performed in a non-adhoc manner, with little to no human intervention (we are not talking about preprocessing here, which obviously will always require some considerable human intervention). This clearly could be accomplished by general-purpose Monte Carlo sampling methods but at the expense of restricting it to s	mall dataset. Contrarily, we are aiming for at least dozens of thousands individuals and genome-wide scale number of genetic markers which nowadays easily break hunder of millions point.
+We aim to unify commonly performed analysis in the genetic analysis community such as heritability estimation, genome-wide association studies, phenotype prediction in a broad sense (e.g., disease risk prediction), variance decomposition, accounting for population structure and family relatedness, regressing out instrumental noise, and many others, in the sense that heteregenous traits from many different sorts of stochastic nature could be performed in a non-adhoc manner, with little to no human intervention (we are not talking about preprocessing here, which obviously will always require some considerable human intervention). This clearly could be accomplished by general-purpose Monte Carlo sampling methods but at the expense of restricting it to small dataset. Contrarily, we are aiming for at least dozens of thousands individuals and genome-wide scale number of genetic markers which nowadays easily break hunder of millions point.
 
 The above will be accomplished by the following items:
 
@@ -76,32 +76,28 @@ $$
 b = \mathbf b\T \bbeta, \qquad \bbeta \sim \mathcal N(0, \sigma^2_{\beta})
 $$
 
-Finally, the i.i.d. noise $\epsilon$ is normally distributed with variance $\sigma^2_{\epsilon}$. If we assume independence and that $\mathrm E[\mathbf b_s] = 0$ and $\mathrm V[\mathbf b_2]=1/\sqrt{n_b}$, we have $\mathrm V[b] = \sigma^2_{\beta}$ denoting the overall effect-size of the random component $b$. If we knew the values of vector $\boldsymbol\alpha$  and made analogous assumptions about the covariates, we would have $\mathrm V[a]  = \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2$. It is under this underlying trait we define genetic concepts as narrow-sense heritability 
+Finally, the i.i.d. noise $\epsilon$ is normally distributed with variance $\sigma^2_{\epsilon}$. If we assume independence and that $\mathrm E[\mathbf b_s] = 0$ and $\mathrm V[\mathbf b_s]=1/\sqrt{n_b}$ for every $s$, we have $\mathrm V[b] = \sigma^2_{\beta}$ denoting the overall effect-size of the random component $b$. If we knew the values of vector $\boldsymbol\alpha$  and made analogous assumptions about the covariates, we would have $\mathrm V[a]  = \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2$. It is under this underlying trait we define genetic concepts such as narrow-sense heritability 
 $$
 h^2=\frac{\sigma^2_{\beta}}{\sigma_t^2}, \qquad \sigma_t^2 = \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2 + \sigma^2_{\beta} + \sigma^2_{\epsilon}
 $$
 
-or as additive effect-size $\balpha_j$ of a genetic variant $\mathbf a_j$.
+or additive effect-size $\balpha_j$ of a genetic variant $\mathbf a_j$.
 
-In practice however we observe traits that clearly do not follow a Normal distribution, and as such the linear equation expressed in Eq. (1) is considered to describe a process we experimentally don't see. This unobserved process though is assumed to be directly associated with the observed one via a link function and its mean definition: 
+In practice however we observe traits that clearly do not follow a Normal distribution, and thus directly applying Eq. (1) might lead to spurious assocation identification or other sort of analysis errors. Thus it is often the case that the phenotype is first transformed (e.g. Box-Cox transformation, quantile normalization) to resemble a normally distributed trait. However, there are many cases in which the proper distribution is know or where there does not seem to exist such a transformation.
+
+Here we take a different approach. We use the linear equation expressed in Eq. (1) to describe a process we experimentally don't see. This unobserved process though is assumed to be directly associated with the observed one via a link function and its mean definition: 
 $$
 g(\mathrm E[y|z]) = z
 $$
+The observed trait is then described via an exponential-family distribution chosen as to match the phenotype random nature.
+
 Fig. 1 shows the corresponding Graphical Model:
 
 <img src="img/model-graph.jpg" alt="model graph" style="width: 200px;"/>
 
 Therefore the user is free to choose the distribution that represent the observed process, as long as it can be completly defined by specifying its mean.
 
-
-
-
-
-
-
-## Methods
-
-### Exponential-family
+## Exponential-family
 
 The exponential-family distributions for standard GLMMs are defined as
 $$
@@ -117,7 +113,7 @@ $$
 \mathrm V[y|\theta] = f''_b(\theta) f_a(\phi) \tag{1}
 $$
 
-### Generalised linear mixed models
+## Generalised linear mixed models
 
 It requires first the definition of a twice-differentiable  function $g:\mathcal R \rightarrow \mathcal R$ which will be used to associate a latent random variable $z$ to the outcome expectation as follows:
 $$
@@ -141,9 +137,9 @@ p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T \bal
 $$
 used in the maximum likelihood approach for parameter fitting. 
 
-### Interpretation
+## Interpretation
 
-#### Bernoulli trait
+### Bernoulli trait
 
 Let $g(x) = \Phi^{-1}(x)$ be the so-called probit link function and consider the Bernoulli likelihood as a suitable distribution of the outcome. Conditioning on the latent variable $z$, we have
 $$
@@ -183,7 +179,7 @@ where $e \sim \normal{0}{\sigma_e^2}$ is the source of i.i.d. noise. (talk that 
 
 The value of $z$ can now be understood as the genetic risk for a particular disease where $\mathbf b$ is a vector of genetic markers (e.g., SNPs) and $\bbeta$ is the effect-sizes of those markers. The fixed-effect component can account for non-genetic effects (e.g., smoke, sex, age) whose descriptors are in $\mathbf a$ and effect-sizes in $\balpha$ to be estimated by the algorithm.
 
-#### Binomial trait
+### Binomial trait
 
 The above model can be naturally extended to the more general one with Binomial trait $y$. Let us now define a random variable
 $$
@@ -214,15 +210,15 @@ The observable trait variable y conditioned on g and ε is given by a summation 
 Bernoulli variables having the probability of succcess equal to Φ((μ + g + ε)/σe)). Precisely,
 the likelihood is given by
 
-#### Poisson trait
+### Poisson trait
 
 As far as I know, this is just Binomial with $ntrials \rightarrow +\infty$. Similar interpretation should happen here.
 
-#### Exponential trait
+### Exponential trait
 
 
 
-### Approximation to probability distribution
+## Approximation to probability distribution
 
 I think we should discuss the methods out there, including the Monte Carlo ones. We should say that despite its simplicity Monte Carlo methods are slow and there is no convergence guarantee (and thus human intervention here is required). We should also discuss deterministic ones like Variational Bayes and explain why we have chosen EP. This can be done by saying that we need a accurate marginal likelihood estimation for model comparison and as such EP has been shown to be empirically unbiased when it comes to moment approximation. As a matter of fact, EP is based on moment matching afterall. Even thought it might not be the most desirable method for posterior point-estimation (as it tends to cover multiple bumps, while VB tends to do the opposite), we really want to know the overall mass (zeroth moment of a random variable $\mathbf x$ defined by $p(\mathbf x) = p(\mathbf y, \mathbf x)$). Moreover, we should show that we always have only one bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
 
@@ -261,7 +257,7 @@ $$
 \sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
 $$
 
-#### Implementation
+### Implementation
 
 An eigen decomposition and a change of variables allow us to write
 $$
@@ -283,7 +279,7 @@ $$
 (\mathrm K + \tilde{\Sigma})^{-1} = \mathrm A_1 - \mathrm A_1 \mathrm Q\mathrm B_1^{-1} \mathrm Q^T \mathrm A_1
 $$
 
-##### Derivation
+### Derivation
 
 $$
 \Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
@@ -310,12 +306,24 @@ $$
 
 ### KL divergence
 
-bla
+The right-hand side of
 $$
 \KL{p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP}}{p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}}
 $$
 
-### Numerical integration
+is just an non-normalized Normal $\hat c_i \Normal{z_i}{\hat \mu_i}{\hat\sigma_i^2}$. At the minimum (cite someone) we have the zeroth, first, and second moments matching both sides (this is when we apply numerical integration). We then compute the EP parameters $\tilde c_i$, $\tilde\mu_i$, and $\tilde\sigma_i^2$ such that
+$$
+\hat c_i \Normal{z_i}{\hat\mu_i}{\hat\sigma_i^2} = p(y_i|z_i)_{\EP} \Normal{z_i}{\mu_{-i}}{\sigma_{-i}^2}\\
+= \tilde c_i \Normal{z_i}{\tilde\mu_i}{\tilde\sigma_i^2} \Normal{z_i}{\mu_{-i}}{\sigma_{-i}^2}
+$$
+Applying Lemma (1)  we have
+$$
+\tilde c_i = \hat c_i \sqrt{2\pi(\tilde\sigma_i^2 + \sigma_{-i}^2)}\exp\left(\frac{(\tilde\mu_i - \mu_{-i})^2}{2(\tilde\sigma_i^2+\sigma_{-i}^2)}\right)\\
+\tilde\mu_i = \tilde\sigma_i^2(\hat\sigma_i^{-2}\hat\mu_i - \sigma_{-i}^{-2}\mu_{-i})\\
+\tilde\sigma_i^2 = (\hat\sigma_i^{-2} - \sigma_{-i}^{-2})^{-1}
+$$
+
+## Numerical integration
 
 We want to compute
 $$
@@ -355,7 +363,7 @@ We apply the likelihood-ratio test in order to find association between a geneti
 
 and (if under the Binomial model) σε2, giving rise to the estimations (βˆnull,σˆg2null,σˆε2null) and(βˆalt, σˆg2alt, σˆε2alt), respectively. The likelihood-ratio statistic is then given by
 $$
-ttest = −2 log p(y)null + 2 log p(y)alt,
+t_{\text{test}} = −2 \log p(\mathbf y)_{\text{null}} + 2 \log p(\mathbf y)_{\text{alt}},
 $$
 where the parameters of p(y)null and p(y)alt are given by (βˆnull, σˆg2null, σˆε2null) and
 
@@ -365,15 +373,18 @@ where the parameters of p(y)null and p(y)alt are given by (βˆnull, σˆg2null,
 
 ## Proofs
 
+**Lemma 1.**
 $$
 \newcommand{A}{\mathbf A}\newcommand{BB}{\mathbf B}\newcommand{a}{\mathbf a}\newcommand{bb}{\mathbf b}
-\newcommand{x}{\mathbf x}
-\Normal{1}{2}{3}
+\newcommand{x}{\mathbf x}\newcommand{C}{\mathbf C}\newcommand{c}{\mathbf c}
+\Normal{\x}{\a}{\A} \Normal{\x}{\bb}{\BB} = d \Normal{\x}{\c}{\C}\\
+\text{where } \c = \C(\A^{-1}\a + \BB^{-1}\bb), \C=(\A^{-1}+\BB^{-1})^{-1}, \text{and } \\
+d=(2\pi)^{-n/2} |\A+\BB|^{-1/2}\exp\left(-\frac{1}{2} (\a-\bb)\T(\A+\BB)^{-1}(\a-\bb)\right)
 $$
 
 
 
-Let $\sigma_i^2 = \Sigma_{i,i}$. The EP marginal cavity probability is given by
+**Proposition 1.** Let $\sigma_i^2 = \Sigma_{i,i}$. The EP marginal cavity probability is given by
 $$
 \sigma_i^2 = \Sigma_{i,i}
 $$
@@ -426,9 +437,12 @@ McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models , Chapman & Hall
 
 | name        | pmf/pdf                                  | theta                   | phi  | a(phi)   |      |
 | ----------- | ---------------------------------------- | ----------------------- | ---- | -------- | ---- |
-| Binomial    | $\exp\left\{(y\theta - \log(1+e^\theta))/n^{-1} + \log {n \choose yn}\right\}$ | $\log\{\frac{p}{1-p}\}$ | $n$  | $1/\phi$ |      |
+| Binomial    | $\exp\left\{\frac{y\theta - \log(1+e^\theta)}{n^{-1}} + \log {n \choose yn}\right\}$ | $\log\{\frac{p}{1-p}\}$ | $n$  | $1/\phi$ |      |
+|             |                                          |                         |      |          |      |
 | Bernoulli   |                                          |                         |      |          |      |
-| Gamma       | $\exp\left\{(y\theta - \log(-\theta^{-1}))/a^{-1}\right\} + a\log(a) + (a-1)\log(y) - \log\Gamma(a)\}$ | $-1/s$                  | $a$  | $1/\phi$ |      |
+| Gamma       | $\exp\left\{\frac{y\theta - \log(-\theta^{-1})}{a^{-1}} + \log\left(\frac{a^a y^{a-1}}{\Gamma(a)}\right)\right\}$ | $-1/s$                  | $a$  | $1/\phi$ |      |
+|             |                                          |                         |      |          |      |
+|             |                                          |                         |      |          |      |
 | Exponential |                                          |                         |      |          |      |
 | Poisson     | $\exp\left\{(y\theta - e^\theta) - \log(y!)\right\}$ | $\log(\lambda)$         | $1$  |          |      |
 | Geometric   | $\exp\left\{y\theta + \log(1-e^\theta)\right\}$ | $\log(1-p)$             | $1$  |          |      |
