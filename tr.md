@@ -103,27 +103,29 @@ The exponential-family distributions for standard GLMMs are defined as
 $$
 y \sim \exp\{(y\theta - f_b(\theta))/f_a(\phi) + f_c(y, \phi)\}
 $$
-with two scalar paramaters $\theta$ and $\phi$ commonly regarded as XYZ and dispersion. The variable $y$ is naturally the outcome modelled by a distribution that emerges from the definition of the $f_{\cdot}(\cdot)$ functions and of the two parameters. As an example, the Bernoulli distribution with probability of success $p$ emerges from the above formulae by setting
+with two scalar paramaters $\theta$ and $\phi$, the later commonly called dispersion. The variable $y$ is naturally the outcome modelled by a distribution that emerges from the definition of the $f_{\cdot}(\cdot)$ functions and of the two parameters. As an example, the Bernoulli distribution with probability of success $p$ emerges from the above formulae by setting
 $$
 \theta = \log\left(\frac{p}{1-p}\right), \phi = 1, f_a(\phi) = \phi, f_b(\theta)=\log(1+e^\theta), f_c(y, \phi) = 0
 $$
 This class of distributions has the following two properties (McCullagh89):
 $$
-\mathrm E[y|\theta] = f'_b(\theta)\\
-\mathrm V[y|\theta] = f''_b(\theta) f_a(\phi) \tag{1}
+\mathrm E[y|\theta, \phi] = f'_b(\theta)\\
+\mathrm V[y|\theta, \phi] = f''_b(\theta) f_a(\phi) \tag{1}
 $$
+
+and encompass many of the probability distributions used in practice. (We will avoid explicitly conditioning on $\phi$ as it is assumed to be given everywhere.)
 
 ## Generalised linear mixed models
 
-It requires first the definition of a twice-differentiable  function $g:\mathcal R \rightarrow \mathcal R$ which will be used to associate a latent random variable $z$ to the outcome expectation as follows:
+It requires first the definition of a twice-differentiable  function $g:\mathcal R \rightarrow \mathcal R$ which will be used to associate  the latent random variable $z$ to the outcome expectation as follows:
 $$
 g(\mathrm E[y|\theta]) = z  \tag{2}
 $$
-The above equation makes clear the connection of $z$ with $\theta$ by also considering Eq. (1).
+The above equation makes clear the connection of $z$ with $\theta$ by also considering Eq. (1). We are now ready to define an instance of the model.
 
 ## Instance of the model
 
-Given a dataset $\data = \{\mathbf y, \mathrm A, \mathrm B\}$ of $n$ individuals together with the observed distribution specification $\outcome=\{\outcome_i\}_1^n$, where each $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$  multivariate distributed according to
+Given a dataset $\data = \{\mathbf y \in \mathcal R^n, \mathrm A \in \mathcal R^{n\times n_a}, \mathrm B \in \mathcal R^{n\times n_b}\}$ of $n$ individuals together with a observed distribution specification $\outcome=\{\outcome_i\}_1^n$, where each $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$  distributed according to
 $$
 \mathbf z \sim \normal{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I} \tag{3}
 $$
@@ -224,7 +226,7 @@ I think we should discuss the methods out there, including the Monte Carlo ones.
 
 ### Expectation Propagation
 
-EP is a deterministic method for approximating probability distributions in order to solve complicated integrals as the one define in Eq. (5). Here EP will replace a given likelihood p(y|z) from some exponential-family distribution by a non-normalized univariate Normal p.d.f
+EP is a deterministic method for approximating probability distributions in order to solve complicated integrals as the one define in Eq. (5). Here EP will replace a given likelihood $p(y|z)$ from some exponential-family distribution by a non-normalized univariate Normal p.d.f
 $$
 p(y|z)_{\EP} = \tilde c \Normal{z}{\tilde \mu}{\tilde \sigma^2}
 $$
@@ -233,17 +235,17 @@ Of course, our problem requires many likelihoods (potentially defined by heterog
 $$
 p(\mathbf y)_{\EP} = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
 $$
-where $\tilde \theta_i = \{\tilde c_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
+where $\tilde \theta_i = \{\tilde c_i, \tilde \mu_i, \tilde \sigma^2_i\}$ is the set of three scalar EP parameters for the $i$-th site likelihood.
 
-Cavity distribution is defined by
+Cavity distribution is defined by (insert deduction in appendix, and refer it)
 $$
 p_{-i}(z_i|\mathbf y)_{\EP} = \Normal{z_i}{\mathbf m_i}{\mathrm K_{i,i}} \prod_{j\neq i} p(y_j|z_j)_{\EP}
 $$
-and used into the minimization of the Kullback–Leibler divergence (refer to Section REF)
+and used into the minimization of the Kullback–Leibler divergence (refer to Section REF for detailed explanation why we do it)
 $$
 \KL{p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP}}{p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}}
 $$
-The minimum of that divergence will provide an update for the values of $\tilde c_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
+The minimum of that divergence will provide an update for the values of $\tilde c_i$, $\tilde\mu_i$, and $\tilde\sigma^2_i$ which will be then used to update the right-hand side of
 $$
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
 $$
@@ -261,11 +263,41 @@ $$
 
 An eigen decomposition and a change of variables allow us to write
 $$
-\mathrm K = \sigma_t^2  ((1-\delta)\mathrm Q \mathrm S \mathrm Q^{T} + \delta \mathrm I)
+\mathrm K = v  ((1-\delta)\mathrm Q \mathrm S \mathrm Q\T + \delta \mathrm I)
 $$
-for $\sigma_b^2=\sigma_t^2(1-\delta)$ and $\sigma_b^2 = \sigma_t \delta$.
+for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$.
 
 The following matrix definitions will help us infer a faster and numerically safe implementation (correct the bellow equations to account for the fact that I reparametrized K above)
+$$
+\mathrm A_1 = (v \delta \mathrm I + \tilde\Sigma)^{-1}\\
+\mathrm B_1 = \mathrm Q\T \mathrm A_1 \mathrm Q + v^{-1} (1-\delta)^{-1} \mathrm S^{-1}
+$$
+
+asdasklkda
+$$
+\Sigma = (\mathrm I + \mathrm K \tilde{\mathrm T})^{-1}  \mathrm K =
+    \tilde{\mathrm T}^{-1} (\tilde{\mathrm T}^{-1} + \mathrm K)^{-1} \mathrm K\\
+    = \tilde{\mathrm T}^{-1} (\mathrm A_1 -
+      \mathrm A_1 \mathrm Q \mathrm B_1^{-1}\mathrm Q^T \mathrm A_1)\mathrm K
+$$
+
+$$
+\boldsymbol \mu = (\mathrm I + \mathrm K \tilde{\mathrm T})^{-1} \mathbf m
+                     + (\mathrm I + \mathrm K \tilde{\mathrm T})^{-1}
+                     \mathrm K \tilde{\boldsymbol \eta}\\
+         = \tilde{\mathrm T}^{-1} (\mathrm A_1 -
+           \mathrm A_1 \mathrm Q \mathrm B_1^{-1}\mathrm Q^T \mathrm A_1)
+            \mathbf m
+        + \tilde{\mathrm T}^{-1} (\mathrm A_1 -
+          \mathrm A_1 \mathrm Q \mathrm B_1^{-1}\mathrm Q^T \mathrm A_1)
+          \mathrm K \tilde{\boldsymbol \eta}
+$$
+
+
+
+### Derivation
+
+Old thing, not numerically safe enough:
 $$
 \mathrm A_0 = \sigma_b^{-2} \delta^{-1} \mathrm I \quad \text{if }\delta > 0\\
 \mathrm A_1 = (\sigma_b^2 \delta \mathrm I + \tilde\Sigma)^{-1}\\
@@ -279,8 +311,10 @@ $$
 (\mathrm K + \tilde{\Sigma})^{-1} = \mathrm A_1 - \mathrm A_1 \mathrm Q\mathrm B_1^{-1} \mathrm Q^T \mathrm A_1
 $$
 
-### Derivation
 
+
+
+divisiaskdhjkjq wjkdq
 $$
 \Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
 = \mathrm A_2 \mathrm K - \mathrm A_2 \mathrm Q
