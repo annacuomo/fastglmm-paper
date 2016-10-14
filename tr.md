@@ -1,6 +1,5 @@
 # Generalised linear mixed models for genetic analysis
 
-<script src="bower_components/mermaid/dist/mermaid.min.js"></script>
 
 $$
 % Shortcuts
@@ -137,7 +136,7 @@ The above equation makes clear the connection of $z$ with $\theta$ by also consi
 
 ## Instance of the model
 
-Given a dataset $\data = \{\mathbf y \in \mathcal R^n, \mat A \in \mathcal R^{n\times n_a}, \mat B \in \mathcal R^{n\times n_b}\}$ of $n$ individuals together with a observed distribution specification $\outcome=\{\outcome_i\}_1^n$, where each $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mat A\T\balpha + \mat B\T\bbeta + \bepsilon$  distributed according to
+Given a dataset $\data = \{\mathbf y \in \mathcal R^n, \mat A \in \mathcal R^{n\times n_a}, \mat B \in \mathcal R^{n\times n_b}\}​$ of $n​$ individuals together with a observed distribution specification $\outcome=\{\outcome\}_1^n​$, where each $\outcome = \{\theta, \phi, f_{a}(\cdot), f_{b}(\cdot), f_{c}(\cdot, \cdot), g(\cdot)\}​$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mat A\T\balpha + \mat B\T\bbeta + \bepsilon​$  distributed according to
 $$
 \mathbf z \sim \normal{\mat A\T \balpha}{\sigma^2_{\beta} \mat B\mat B\T + \sigma^2_{\epsilon} \mat I} \tag{3}
 $$
@@ -247,7 +246,7 @@ Of course, our problem requires many likelihoods (potentially defined by heterog
 $$
 p(\mathbf y)_{\EP} = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mat K}
 $$
-where $\tilde \theta_i = \{\tilde c_i, \tilde \mu_i, \tilde \sigma^2_i\}$ is the set of three scalar EP parameters for the $i$-th site likelihood.
+where $\tilde \theta = \{\tilde c, \tilde \mu, \tilde \sigma^2\}$ is the set of three scalar EP parameters for the $i$-th site likelihood.
 
 Cavity distribution is defined by (insert deduction in appendix, and refer it)
 $$
@@ -257,7 +256,7 @@ and used into the minimization of the Kullback–Leibler divergence (refer to Se
 $$
 \KL{p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP}}{p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}}
 $$
-The minimum of that divergence will provide an update for the values of $\tilde c_i$, $\tilde\mu_i$, and $\tilde\sigma^2_i$ which will be then used to update the right-hand side of
+The minimum of that divergence will provide an update for the values of $\tilde c$, $\tilde\mu$, and $\tilde\sigma^2$ which will be then used to update the right-hand side of
 $$
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
 $$
@@ -279,9 +278,12 @@ $$
 $$
 for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$, where $\mat Q\mat S\mat Q\T$ is the economic eigen-decomposition (refer to Section BLA) of $\mat B\mat B\T$. For convenience, let stick with $\mat K = \sigma_b^2 \mat Q\mat S \mat Q\T + \sigma_{\epsilon}^2 \mat I$ for now.
 
-The following matrix definitions will help us infer a faster and numerically safe implementation
+Let us define
 $$
-\mcal A = (\sigma_{\eps}^2 \mat I + \tilde\Sigma)^{-1}\\
+\mcal A = \left\{\begin{gather}
+\tilde{\mat T} (\tilde{\mat T} + \sigma_{\eps}^{-2} \mat I)^{-1}\sigma_{\eps}^{-2} & \text{if } \sigma_{\eps}^2>0\\
+\tilde{\mat T} & \text{if } \sigma_{\eps}^2=0
+\end{gather}\right.\\
 \mcal B = \mat Q\T \mcal A \mat Q + \sigma_b^{-2} \mat S^{-1}\\
 \mcal C = (\sigma_{\eps}^2 \tilde{\mat T} + \mat I)^{-1}
 $$
@@ -313,6 +315,28 @@ $$
 \bmu = \mathbf m - \mat Q \mcal B^{-1}\mat Q\T \mcal A\mathbf m + \mat K \eita - \mat Q\mcal B^{-1}\mat Q\T \mcal A\mat K\tilde\eita
 $$
 
+#### EP parameters update
+
+The right-hand side of
+$$
+\KL{p(y|z) p_-(z | \mathbf y)_{\EP}}{p(y|z)_{\EP} p_-(z | \mathbf y)_{\EP}}
+$$
+
+is just an non-normalized Normal $\hat c \Normal{z}{\hat \mu}{\hat\sigma^2}$. At the minimum (cite someone) we have the zeroth, first, and second moments matching both sides (this is when we apply numerical integration). We then compute the EP parameters $\tilde c$, $\tilde\mu$, and $\tilde\sigma^2$ such that
+$$
+\hat c \Normal{z}{\hat\mu}{\hat\sigma^2} = p(y|z)_{\EP} \Normal{z}{\mu_-}{\sigma_-^2}\\
+= \tilde c \Normal{z}{\tilde\mu}{\tilde\sigma^2} \Normal{z}{\mu_-}{\sigma_-^2}
+$$
+Applying Lemma (1)  we have
+$$
+\tilde c = \hat c \sqrt{2\pi(\tilde\sigma^2 + \sigma_-^2)}\exp\left(\frac{(\tilde\mu - \mu_-)^2}{2(\tilde\sigma^2+\sigma_-^2)}\right)\\
+\tilde\mu = \tilde\sigma^2(\hat\sigma^{-2}\hat\mu - \sigma_{-}^{-2}\mu_-)\\
+\tilde\sigma^2 = (\hat\sigma^{-2} - \sigma_-^{-2})^{-1}
+$$
+
+
+
+
 #### Log marginal likelihood
 
 We will divide Eq. (X) in many parts but first observe that
@@ -321,9 +345,7 @@ $$
 $$
 Let
 $$
-
 \omega_1 = -\frac{1}{2} \log|\mat K + \tilde{\mat T}^{-1}| = -\frac{1}{2} \log|\mcal B| - \frac{1}{2} \log|\sigma_b^2\mat S| + \frac{1}{2} \log|\mcal A|
-
 $$
 
 $$
@@ -332,14 +354,14 @@ $$
 		= \frac{1}{2}\tilde\eita\T\left( -\tilde{\mat T}^{-1} \mcal A \tilde{\mat T}^{-1} +
 			\tilde{\mat T}^{-1} \mcal A\mat Q \mcal B^{-1} \mat Q\T\mcal A\tilde{\mat T}^{-1} + \tilde{\mat T}^{-1}
 			- (\tilde{\mat T} + \Sigma_{-}^{-1})^{-1}\right) \tilde\eita\\
-		= \frac{1}{2} \tilde\eita\T\left( \sigma_{\eps}^2(\sigma_{\eps}^2\tilde{\mat T} + \mat I)^{-1} +
-			\mcal C \mat Q \mcal B^{-1} \mat Q\T\mcal C + \tilde{\mat T}^{-1}
-				+ \Sigma_{-}^{-1})^{-1}\right) \tilde\eita
+		= \frac{1}{2} \tilde\eita\T\left( \sigma_{\eps}^2 \mcal C +
+			\mcal C \mat Q \mcal B^{-1} \mat Q\T\mcal C
+				- (\tilde{\mat T} + \Sigma_{-}^{-1})^{-1}\right) \tilde\eita
 $$
 
 $$
 \omega_3 = \frac{1}{2} \bmu_-\T (\tilde{\mat T}^{-1} + \Sigma_-)^{-1} (\bmu_- - 2\tilde\bmu)
-	=\frac{1}{2} \eita_-\T (\tilde{\mat T} + \Sigma_-^{-1})^{-1}(\tilde{\mat T} \bmu_- 2\tilde\eita)
+	=\frac{1}{2} \eita_-\T (\tilde{\mat T} + \Sigma_-^{-1})^{-1}(\tilde{\mat T} \bmu_- - 2\tilde\eita)
 $$
 
 $$
@@ -349,7 +371,7 @@ $$
 
 $$
 \omega_5 = -\frac{1}{2} \mathbf m\T(\mat K + \tilde{\mat T}^{-1})^{-1}\mathbf m = -\frac{1}{2}\mathbf m\T\mcal A\mathbf m +
-	\frac{1}{2} \mathbf m\T \mcal A \mat Q \mcal B^{-1} \mcal Q\T \mcal A \mathbf m
+	\frac{1}{2} \mathbf m\T \mcal A \mat Q \mcal B^{-1} \mat Q\T \mcal A \mathbf m
 $$
 
 $$
@@ -357,67 +379,9 @@ $$
 	\log|\tilde{\mat T} + \Sigma_-^{-1}| - \log|\Sigma_-^{-1}|)
 $$
 
-### Derivation
+The log marginal likelihood is just the summation of the above terms.
 
-Old thing, not numerically safe enough:
-$$
-\mat A_0 = \sigma_b^{-2} \delta^{-1} \mat I \quad \text{if }\delta > 0\\
-\mat A_1 = (\sigma_b^2 \delta \mat I + \tilde\Sigma)^{-1}\\
-\mat A_1 = \mat A_0 (\mat A_0 + \tilde{\mat T})^{-1} \tilde{\mat T} = \tilde{\mat T} - \tilde{\mat T} (\mat A_0 + \tilde{\mat T})^{-1} \tilde{\mat T} \quad \text{if }\delta > 0\\
-\mat A_1 = \tilde{\mat T} \quad \text{if } \delta = 0\\
-
-\mat A_2 = (\mat A_0 + \tilde{\mat T})^{-1} \quad \text{if } \delta > 0\\
-\mat B_0 = \mat Q^T \mat A_0 \mat Q + (\sigma_b^2 \mat S)^{-1} \quad \text{if } \delta > 0\\
-\mat B_1 = \mat Q^T \mat A_1 \mat Q + (\sigma_b^2 \mat S)^{-1}\\
-\mat K^{-1} = \mat A_0 - \mat A_0 \mat Q \mat B_0^{-1} \mat Q^T \mat A_0 \quad \text{if } \delta > 0\\
-(\mat K + \tilde{\Sigma})^{-1} = \mat A_1 - \mat A_1 \mat Q\mat B_1^{-1} \mat Q^T \mat A_1
-$$
-
-
-
-
-divisiaskdhjkjq wjkdq
-$$
-\Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mat K)^{-1} \mat K = \tilde{\Sigma} (\mat A_1 - \mat A_1 \mat Q \mat B^{-1}\mat Q\T \mat A_1) \mat K
-= \mat A_2 \mat K - \mat A_2 \mat Q
-          \mat B^{-1}\mat Q\T \mat A_1 \mat K
-$$
-
-$$
-\bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mat K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
-\mat K)^{-1} \mat K \tilde{\boldsymbol\eta}
-= \tilde{\Sigma} (\mat A_1 - \mat A_1 \mat Q \mat B^{-1}\mat Q\T \mat A_1) \mathbf m +
-\tilde{\Sigma}^{-1} (\mat A_1 - \mat A_1 \mat Q \mat B^{-1}\mat Q\T \mat A_1)
-          \mat K \tilde{\boldsymbol \eta}\\
-= \mat A_2 \mathbf m - \mat A_2 \mat Q \mat B^{-1}\mat Q\T \mat A_1 \mathbf m
-         + \mat A_2 \mat K \tilde{\boldsymbol \eta} - \mat A_2 \mat Q \mat B^{-1}\mat Q\T
-           \mat A_1 \mat K \tilde{\boldsymbol \eta}
-$$
-
-
-$$
-\Sigma = (\mat K^{-1} + \tilde{\Sigma}^{-1})^{-1}\\
-\bmu = \Sigma (\mat K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
-$$
-
-### KL divergence
-
-The right-hand side of
-$$
-\KL{p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP}}{p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}}
-$$
-
-is just an non-normalized Normal $\hat c_i \Normal{z_i}{\hat \mu_i}{\hat\sigma_i^2}$. At the minimum (cite someone) we have the zeroth, first, and second moments matching both sides (this is when we apply numerical integration). We then compute the EP parameters $\tilde c_i$, $\tilde\mu_i$, and $\tilde\sigma_i^2$ such that
-$$
-\hat c_i \Normal{z_i}{\hat\mu_i}{\hat\sigma_i^2} = p(y_i|z_i)_{\EP} \Normal{z_i}{\mu_{-i}}{\sigma_{-i}^2}\\
-= \tilde c_i \Normal{z_i}{\tilde\mu_i}{\tilde\sigma_i^2} \Normal{z_i}{\mu_{-i}}{\sigma_{-i}^2}
-$$
-Applying Lemma (1)  we have
-$$
-\tilde c_i = \hat c_i \sqrt{2\pi(\tilde\sigma_i^2 + \sigma_{-i}^2)}\exp\left(\frac{(\tilde\mu_i - \mu_{-i})^2}{2(\tilde\sigma_i^2+\sigma_{-i}^2)}\right)\\
-\tilde\mu_i = \tilde\sigma_i^2(\hat\sigma_i^{-2}\hat\mu_i - \sigma_{-i}^{-2}\mu_{-i})\\
-\tilde\sigma_i^2 = (\hat\sigma_i^{-2} - \sigma_{-i}^{-2})^{-1}
-$$
+### Blabla
 
 ## Numerical integration
 
@@ -480,7 +444,7 @@ $$
 
 
 
-**Proposition 1.** Let $\sigma_i^2 = \Sigma_{i,i}$. The EP marginal cavity probability is given by
+**Proposition 1.** Let $\sigma^2 = \Sigma_{i,i}$. The EP marginal cavity probability is given by
 $$
 \sigma_i^2 = \Sigma_{i,i}
 $$
