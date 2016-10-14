@@ -381,7 +381,19 @@ $$
 
 The log marginal likelihood is just the summation of the above terms.
 
-### Blabla
+### Optimal fixed effect-sizes
+
+The optimal $\balpha$, assuming that everything else is fixed, is given by taking the gradient of the log marginal likelihood and setting it to zero:
+$$
+\balpha = (\mat A\T(\tilde\Sigma + \mat K)^{-1}\mat A)^{-1} \mat A\T(\tilde\Sigma + \mat K)^{-1}\tilde\bmu
+$$
+
+#### Implementation
+
+$$
+\balpha = (\mat A\T \mcal A\mat A - \mat A\T \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal A\mat A)^{-1}
+	\mat A\T (\mcal C - \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal C) \tilde\eita
+$$
 
 ## Numerical integration
 
