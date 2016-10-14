@@ -2,6 +2,11 @@
 
 
 $$
+% Shortcuts
+\newcommand{\mcal}{\mathcal}
+\newcommand{\eps}{\epsilon}
+\newcommand{\eita}{\boldsymbol\eta}
+
 % Distributions
 \newcommand{\normal}[2]{\mathcal{N}\left(\, {#1} \,;\, {#2} \,\right)}
 \newcommand\Normal[3]{\normal{ {#1} \, \big| \, {#2} }{ {#3} }}
@@ -27,6 +32,9 @@ $$
 % KL divergence
 \newcommand{\KL}[2]{\text{KL}\left[\, {#1}  \,||\, {#2} \,\right]}
 
+% Matrix
+\newcommand{\mat}{\mathrm}
+
 \newcommand{\bmu}{\boldsymbol\mu}
 \newcommand{\balpha}{\boldsymbol\alpha}
 \newcommand{\bbeta}{\boldsymbol\beta}
@@ -35,7 +43,7 @@ $$
 \newcommand{EP}{\text{EP}}
 
 \normal{1}{2}, \Normal{1}{2}{2}, \data, \outcome, \balpha, \bbeta, \bepsilon, \expfam{1}, \, \Pr{a=0}, \Ind{x>0}
-\KL{p(x)}{q(x)}
+\KL{p(x)}{q(x)}, \mat A, \mcal N
 $$
 
 ## Abstract
@@ -76,7 +84,7 @@ $$
 b = \mathbf b\T \bbeta, \qquad \bbeta \sim \mathcal N(0, \sigma^2_{\beta})
 $$
 
-Finally, the i.i.d. noise $\epsilon$ is normally distributed with variance $\sigma^2_{\epsilon}$. If we assume independence and that $\mathrm E[\mathbf b_s] = 0$ and $\mathrm V[\mathbf b_s]=1/\sqrt{n_b}$ for every $s$, we have $\mathrm V[b] = \sigma^2_{\beta}$ denoting the overall effect-size of the random component $b$. If we knew the values of vector $\boldsymbol\alpha$  and made analogous assumptions about the covariates, we would have $\mathrm V[a]  = \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2$. It is under this underlying trait we define genetic concepts such as narrow-sense heritability 
+Finally, the i.i.d. noise $\epsilon$ is normally distributed with variance $\sigma^2_{\epsilon}$. If we assume independence and that $\mat E[\mathbf b_s] = 0$ and $\mat V[\mathbf b_s]=1/\sqrt{n_b}$ for every $s$, we have $\mat V[b] = \sigma^2_{\beta}$ denoting the overall effect-size of the random component $b$. If we knew the values of vector $\boldsymbol\alpha$  and made analogous assumptions about the covariates, we would have $\mat V[a]  = \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2$. It is under this underlying trait we define genetic concepts such as narrow-sense heritability
 $$
 h^2=\frac{\sigma^2_{\beta}}{\sigma_t^2}, \qquad \sigma_t^2 = \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2 + \sigma^2_{\beta} + \sigma^2_{\epsilon}
 $$
@@ -85,9 +93,9 @@ or additive effect-size $\balpha_j$ of a genetic variant $\mathbf a_j$.
 
 In practice however we observe traits that clearly do not follow a Normal distribution, and thus directly applying Eq. (1) might lead to spurious assocation identification or other sort of analysis errors. Thus it is often the case that the phenotype is first transformed (e.g. Box-Cox transformation, quantile normalization) to resemble a normally distributed trait. However, there are many cases in which the proper distribution is know or where there does not seem to exist such a transformation.
 
-Here we take a different approach. We use the linear equation expressed in Eq. (1) to describe a process we experimentally don't see. This unobserved process though is assumed to be directly associated with the observed one via a link function and its mean definition: 
+Here we take a different approach. We use the linear equation expressed in Eq. (1) to describe a process we experimentally don't see. This unobserved process though is assumed to be directly associated with the observed one via a link function and its mean definition:
 $$
-g(\mathrm E[y|z]) = z
+g(\mat E[y|z]) = z
 $$
 The observed trait is then described via an exponential-family distribution chosen as to match the phenotype random nature.
 
@@ -109,8 +117,8 @@ $$
 $$
 This class of distributions has the following two properties (McCullagh89):
 $$
-\mathrm E[y|\theta, \phi] = f'_b(\theta)\\
-\mathrm V[y|\theta, \phi] = f''_b(\theta) f_a(\phi) \tag{1}
+\mat E[y|\theta, \phi] = f'_b(\theta)\\
+\mat V[y|\theta, \phi] = f''_b(\theta) f_a(\phi) \tag{1}
 $$
 
 and encompass many of the probability distributions used in practice. (We will avoid explicitly conditioning on $\phi$ as it is assumed to be given everywhere.)
@@ -119,15 +127,15 @@ and encompass many of the probability distributions used in practice. (We will a
 
 It requires first the definition of a twice-differentiable  function $g:\mathcal R \rightarrow \mathcal R$ which will be used to associate  the latent random variable $z$ to the outcome expectation as follows:
 $$
-g(\mathrm E[y|\theta]) = z  \tag{2}
+g(\mat E[y|\theta]) = z  \tag{2}
 $$
 The above equation makes clear the connection of $z$ with $\theta$ by also considering Eq. (1). We are now ready to define an instance of the model.
 
 ## Instance of the model
 
-Given a dataset $\data = \{\mathbf y \in \mathcal R^n, \mathrm A \in \mathcal R^{n\times n_a}, \mathrm B \in \mathcal R^{n\times n_b}\}$ of $n$ individuals together with a observed distribution specification $\outcome=\{\outcome_i\}_1^n$, where each $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$  distributed according to
+Given a dataset $\data = \{\mathbf y \in \mathcal R^n, \mat A \in \mathcal R^{n\times n_a}, \mat B \in \mathcal R^{n\times n_b}\}$ of $n$ individuals together with a observed distribution specification $\outcome=\{\outcome_i\}_1^n$, where each $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mat A\T\balpha + \mat B\T\bbeta + \bepsilon$  distributed according to
 $$
-\mathbf z \sim \normal{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I} \tag{3}
+\mathbf z \sim \normal{\mat A\T \balpha}{\sigma^2_{\beta} \mat B\mat B\T + \sigma^2_{\epsilon} \mat I} \tag{3}
 $$
 Moreover, we have now a connection between the latent space and the observed space
 $$
@@ -135,9 +143,9 @@ p(y_i | z_i) = \expfam{y_i | \outcome_i, b'(\theta)=g^{-1}(z_i)} \tag{4}
 $$
 which fully describe the marginal likelihood
 $$
-p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I} \mathrm d \mathbf z \tag{5}
+p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mat A\T \balpha}{\sigma^2_{\beta} \mat B\mat B\T + \sigma^2_{\epsilon} \mat I} \mat d \mathbf z \tag{5}
 $$
-used in the maximum likelihood approach for parameter fitting. 
+used in the maximum likelihood approach for parameter fitting.
 
 ## Interpretation
 
@@ -150,7 +158,7 @@ g^{-1}(z) = \Phi(z) & \text{for } y = 1\\
 1-g^{-1}(z) = 1-\Phi(z) & \text{for } y = 0
 \end{gather}\right.
 $$
-Let us define a random variable $\tilde y | z = z + e$ in which $z$ is given and $e$ is standard-Normally distributed random variable such that 
+Let us define a random variable $\tilde y | z = z + e$ in which $z$ is given and $e$ is standard-Normally distributed random variable such that
 $$
 \tilde y | z = \left\{\begin{gather}
 1 & \text{for } z + e > 0\\
@@ -160,8 +168,8 @@ $$
 Its p.m.f can thus be written as
 $$
 p(\tilde y | z) = \left\{\begin{gather}
-\Pr{e > -z | z} = \int_{-z}^{+\infty} \Normal{x}{0}{1} \mathrm d x = \Phi(z)  & \text{for } 1\\
-\Pr{e \leq -z | z} = \int_{-\infty}^{-z} \Normal{x}{0}{1} \mathrm d x = 1-\Phi(z) & \text{for } 0
+\Pr{e > -z | z} = \int_{-z}^{+\infty} \Normal{x}{0}{1} \mat d x = \Phi(z)  & \text{for } 1\\
+\Pr{e \leq -z | z} = \int_{-\infty}^{-z} \Normal{x}{0}{1} \mat d x = 1-\Phi(z) & \text{for } 0
 \end{gather}\right.
 $$
 which proves that $p(y|z) = p(\tilde y|z)$. More generally, let $g(x)$ be any link function (TODO: I might need to assume symmetry here). The definition
@@ -189,7 +197,7 @@ $$
 $$
 and the auxiliary one $\tilde y_j | z = \Ind{z+e_j > 0}$ such that $\tilde y = \sum_{j=1}^{ntrials} \tilde y_j$ conditioned on $z$, and $e_j$ are i.i.d. Since the order of the auxiliary variables does not matter, by combination we have
 $$
-p(\tilde y|z) = {ntrials \choose \tilde y} (\Pr{e > -z|z})^{\tilde y} (\Pr{e \leq -z|z})^{ntrials - \tilde y} = 
+p(\tilde y|z) = {ntrials \choose \tilde y} (\Pr{e > -z|z})^{\tilde y} (\Pr{e \leq -z|z})^{ntrials - \tilde y} =
 	{ntrials \choose \tilde y} (g^{-1}(z))^{\tilde y} (1-g^{-1}(z))^{ntrials - \tilde y}
 $$
 where $e_j \sim \normal{0}{\sigma_e^2}$.
@@ -231,15 +239,15 @@ $$
 p(y|z)_{\EP} = \tilde c \Normal{z}{\tilde \mu}{\tilde \sigma^2}
 $$
 
-Of course, our problem requires many likelihoods (potentially defined by heterogenous distributions) together with a multivariate Normal distribution (Eqs. (3-4)). For convenience, let us define $\mathbf m = \mathrm A\T \balpha$ and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I$. The EP approximation for our scenario is given by
+Of course, our problem requires many likelihoods (potentially defined by heterogenous distributions) together with a multivariate Normal distribution (Eqs. (3-4)). For convenience, let us define $\mathbf m = \mat A\T \balpha$ and $\mat K = \sigma^2_{\beta} \mat B\mat B\T + \sigma^2_{\epsilon} \mat I$. The EP approximation for our scenario is given by
 $$
-p(\mathbf y)_{\EP} = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
+p(\mathbf y)_{\EP} = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mat K}
 $$
 where $\tilde \theta_i = \{\tilde c_i, \tilde \mu_i, \tilde \sigma^2_i\}$ is the set of three scalar EP parameters for the $i$-th site likelihood.
 
 Cavity distribution is defined by (insert deduction in appendix, and refer it)
 $$
-p_{-i}(z_i|\mathbf y)_{\EP} = \Normal{z_i}{\mathbf m_i}{\mathrm K_{i,i}} \prod_{j\neq i} p(y_j|z_j)_{\EP}
+p_{-i}(z_i|\mathbf y)_{\EP} = \Normal{z_i}{\mathbf m_i}{\mat K_{i,i}} \prod_{j\neq i} p(y_j|z_j)_{\EP}
 $$
 and used into the minimization of the Kullback–Leibler divergence (refer to Section REF for detailed explanation why we do it)
 $$
@@ -249,48 +257,44 @@ The minimum of that divergence will provide an update for the values of $\tilde 
 $$
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
 $$
-where $\bmu = \Sigma(\mathrm K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ and $\Sigma=(\mathrm K^{-1} + \tilde\Sigma^{-1})^{-1}$.
+where $\bmu = \Sigma(\mat K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ and $\Sigma=(\mat K^{-1} + \tilde\Sigma^{-1})^{-1}$.
 
 
 
 The EP marginal log-likelihood is found by integrating $\mathbf z$ out of $p(\mathbf y, \mathbf z)_{\EP}$ which gives us
 $$
-\log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mathrm K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\T(\mathrm K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
+\log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mat K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\T(\mat K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
 \sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
 $$
 
 ### Implementation
 
-An eigen decomposition and a change of variables allow us to write
+Later on we will be working with
 $$
-\mathrm K = v  ((1-\delta)\mathrm Q \mathrm S \mathrm Q\T + \delta \mathrm I)
+\mat K = v  ((1-\delta)\mat Q \mat S \mat Q\T + \delta \mat I)
 $$
-for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$.
+for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$, where $\mat Q\mat S\mat Q\T$ is the eigen-decomposition of $\mat B\mat B\T$. For convenience, let stick with $\mat K = \sigma_b^2 \mat Q\mat S \mat Q\T + \sigma_{\epsilon}^2 \mat I$ for now.
 
 The following matrix definitions will help us infer a faster and numerically safe implementation (correct the bellow equations to account for the fact that I reparametrized K above)
 $$
-\mathrm A_1 = (v \delta \mathrm I + \tilde\Sigma)^{-1}\\
-\mathrm B_1 = \mathrm Q\T \mathrm A_1 \mathrm Q + v^{-1} (1-\delta)^{-1} \mathrm S^{-1}
+\mcal A = (\sigma_{\eps}^2 \mat I + \tilde\Sigma)^{-1}\\
+\mcal B = \mat Q\T \mcal A \mat Q + \sigma_b^{-2} \mat S^{-1}
 $$
 
-asdasklkda
+Numerical safety, we should use the inverse of $\tilde \Sigma$ whenever we can. Thus let $\tilde{\mat T}=\tilde \Sigma^{-1}$ and $\tilde{\eita} = \tilde{\mat T} \tilde{\bmu}$ for convenience. We can write the matrix covariance and mean of the approximated posterior as
 $$
-\Sigma = (\mathrm I + \mathrm K \tilde{\mathrm T})^{-1}  \mathrm K =
-    \tilde{\mathrm T}^{-1} (\tilde{\mathrm T}^{-1} + \mathrm K)^{-1} \mathrm K\\
-    = \tilde{\mathrm T}^{-1} (\mathrm A_1 -
-      \mathrm A_1 \mathrm Q \mathrm B_1^{-1}\mathrm Q^T \mathrm A_1)\mathrm K
+\Sigma = (\mat I + \mat K \tilde{\mat T})^{-1}  \mat K =
+    \tilde{\mat T}^{-1} (\tilde{\mat T}^{-1} + \mat K)^{-1} \mat K = \tilde{\mat T}^{-1} (\mcal A -
+      \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A)\mat K
 $$
 
 $$
-\boldsymbol \mu = (\mathrm I + \mathrm K \tilde{\mathrm T})^{-1} \mathbf m
-                     + (\mathrm I + \mathrm K \tilde{\mathrm T})^{-1}
-                     \mathrm K \tilde{\boldsymbol \eta}\\
-         = \tilde{\mathrm T}^{-1} (\mathrm A_1 -
-           \mathrm A_1 \mathrm Q \mathrm B_1^{-1}\mathrm Q^T \mathrm A_1)
-            \mathbf m
-        + \tilde{\mathrm T}^{-1} (\mathrm A_1 -
-          \mathrm A_1 \mathrm Q \mathrm B_1^{-1}\mathrm Q^T \mathrm A_1)
-          \mathrm K \tilde{\boldsymbol \eta}
+\boldsymbol \mu = (\mat I + \mat K \tilde{\mat T})^{-1} \mathbf m
+                     + (\mat I + \mat K \tilde{\mat T})^{-1}
+                     \mat K \tilde{\boldsymbol \eta}
+         = \tilde{\mat T}^{-1} (\mat A_1 -
+           \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mathbf m +
+           \tilde{\mat T}^{-1} (\mcal A - \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mat K \tilde{\eita}
 $$
 
 
@@ -299,16 +303,16 @@ $$
 
 Old thing, not numerically safe enough:
 $$
-\mathrm A_0 = \sigma_b^{-2} \delta^{-1} \mathrm I \quad \text{if }\delta > 0\\
-\mathrm A_1 = (\sigma_b^2 \delta \mathrm I + \tilde\Sigma)^{-1}\\
-\mathrm A_1 = \mathrm A_0 (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} = \tilde{\mathrm T} - \tilde{\mathrm T} (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} \quad \text{if }\delta > 0\\
-\mathrm A_1 = \tilde{\mathrm T} \quad \text{if } \delta = 0\\
+\mat A_0 = \sigma_b^{-2} \delta^{-1} \mat I \quad \text{if }\delta > 0\\
+\mat A_1 = (\sigma_b^2 \delta \mat I + \tilde\Sigma)^{-1}\\
+\mat A_1 = \mat A_0 (\mat A_0 + \tilde{\mat T})^{-1} \tilde{\mat T} = \tilde{\mat T} - \tilde{\mat T} (\mat A_0 + \tilde{\mat T})^{-1} \tilde{\mat T} \quad \text{if }\delta > 0\\
+\mat A_1 = \tilde{\mat T} \quad \text{if } \delta = 0\\
 
-\mathrm A_2 = (\mathrm A_0 + \tilde{\mathrm T})^{-1} \quad \text{if } \delta > 0\\
-\mathrm B_0 = \mathrm Q^T \mathrm A_0 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1} \quad \text{if } \delta > 0\\
-\mathrm B_1 = \mathrm Q^T \mathrm A_1 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1}\\
-\mathrm K^{-1} = \mathrm A_0 - \mathrm A_0 \mathrm Q \mathrm B_0^{-1} \mathrm Q^T \mathrm A_0 \quad \text{if } \delta > 0\\
-(\mathrm K + \tilde{\Sigma})^{-1} = \mathrm A_1 - \mathrm A_1 \mathrm Q\mathrm B_1^{-1} \mathrm Q^T \mathrm A_1
+\mat A_2 = (\mat A_0 + \tilde{\mat T})^{-1} \quad \text{if } \delta > 0\\
+\mat B_0 = \mat Q^T \mat A_0 \mat Q + (\sigma_b^2 \mat S)^{-1} \quad \text{if } \delta > 0\\
+\mat B_1 = \mat Q^T \mat A_1 \mat Q + (\sigma_b^2 \mat S)^{-1}\\
+\mat K^{-1} = \mat A_0 - \mat A_0 \mat Q \mat B_0^{-1} \mat Q^T \mat A_0 \quad \text{if } \delta > 0\\
+(\mat K + \tilde{\Sigma})^{-1} = \mat A_1 - \mat A_1 \mat Q\mat B_1^{-1} \mat Q^T \mat A_1
 $$
 
 
@@ -316,26 +320,26 @@ $$
 
 divisiaskdhjkjq wjkdq
 $$
-\Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
-= \mathrm A_2 \mathrm K - \mathrm A_2 \mathrm Q
-          \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathrm K
+\Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mat K)^{-1} \mat K = \tilde{\Sigma} (\mat A_1 - \mat A_1 \mat Q \mat B^{-1}\mat Q\T \mat A_1) \mat K
+= \mat A_2 \mat K - \mat A_2 \mat Q
+          \mat B^{-1}\mat Q\T \mat A_1 \mat K
 $$
 
 $$
-\bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
-\mathrm K)^{-1} \mathrm K \tilde{\boldsymbol\eta}
-= \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathbf m +
-\tilde{\Sigma}^{-1} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1)
-          \mathrm K \tilde{\boldsymbol \eta}\\
-= \mathrm A_2 \mathbf m - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathbf m
-         + \mathrm A_2 \mathrm K \tilde{\boldsymbol \eta} - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T
-           \mathrm A_1 \mathrm K \tilde{\boldsymbol \eta}
+\bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mat K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
+\mat K)^{-1} \mat K \tilde{\boldsymbol\eta}
+= \tilde{\Sigma} (\mat A_1 - \mat A_1 \mat Q \mat B^{-1}\mat Q\T \mat A_1) \mathbf m +
+\tilde{\Sigma}^{-1} (\mat A_1 - \mat A_1 \mat Q \mat B^{-1}\mat Q\T \mat A_1)
+          \mat K \tilde{\boldsymbol \eta}\\
+= \mat A_2 \mathbf m - \mat A_2 \mat Q \mat B^{-1}\mat Q\T \mat A_1 \mathbf m
+         + \mat A_2 \mat K \tilde{\boldsymbol \eta} - \mat A_2 \mat Q \mat B^{-1}\mat Q\T
+           \mat A_1 \mat K \tilde{\boldsymbol \eta}
 $$
 
 
 $$
-\Sigma = (\mathrm K^{-1} + \tilde{\Sigma}^{-1})^{-1}\\
-\bmu = \Sigma (\mathrm K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
+\Sigma = (\mat K^{-1} + \tilde{\Sigma}^{-1})^{-1}\\
+\bmu = \Sigma (\mat K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
 $$
 
 ### KL divergence
@@ -361,7 +365,7 @@ $$
 
 We want to compute
 $$
-\int_{-\infty}^{+\infty} z^m \expfam{y |\outcome, g(b'(\theta))=z} \Normal{z}{\mu}{\sigma^2}\mathrm dz
+\int_{-\infty}^{+\infty} z^m \expfam{y |\outcome, g(b'(\theta))=z} \Normal{z}{\mu}{\sigma^2}\mat dz
 $$
 for $m\in\{0, 1, 2\}$ in less than a millisecond for a single-core machine. A method that solves this problem must also provide error guarantees.
 
@@ -431,7 +435,7 @@ $$
 
 *Proof.* Note that
 $$
-p_{-i}(z_i|\mathbf y) = \int p(\mathbf z|\mathbf y)_{\EP} \frac{p(\mathbf y)_{\EP}}{p(y_i|z_i)_{\EP}} \mathrm dz_{-i}
+p_{-i}(z_i|\mathbf y) = \int p(\mathbf z|\mathbf y)_{\EP} \frac{p(\mathbf y)_{\EP}}{p(y_i|z_i)_{\EP}} \mat dz_{-i}
         = p(\mathbf y)_{\EP} \frac{p(z_i|\mathbf y)_{\EP}}{p(y_i|z_i)_{\EP}}\\
         \propto \frac{\Normal{z_i}{\mu_i}{\sigma_i^2}}{\Normal{z_i}{\tilde \mu_i}{\tilde \sigma_i^2}}.
 $$
@@ -448,7 +452,7 @@ $$
 
 FALCONER, D.S., 1965. The inheritance of liability to certain diseases, estimated from the incidence among relatives. Annals of Human Genetics, 29(1), pp.51–76. Available at: http://onlinelibrary.wiley.com/doi/10.1111/j.1469-1809.1965.tb00500.x/abstract.
 
-Lee, S.H. et al., 2011. Estimating Missing Heritability for Disease from Genome-wide Association Studies. The American Journal of Human Genetics, 88(3), pp.294–305. Available at: http://www.cell.com/ajhg/abstract/S0002-9297(11)00020-6.	
+Lee, S.H. et al., 2011. Estimating Missing Heritability for Disease from Genome-wide Association Studies. The American Journal of Human Genetics, 88(3), pp.294–305. Available at: http://www.cell.com/ajhg/abstract/S0002-9297(11)00020-6.
 
 McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models , Chapman & Hall / CRC , London.
 
@@ -488,13 +492,3 @@ McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models , Chapman & Hall
 "For complex diseases it would be very useful to apply the same estimation procedure to case-control GWAS data. However, there are three issues that need to be overcome to be able to estimate genetic variance for disease without bias and with computationally fast algorithms:
 
 Quality control (QC) of SNPs. QC is more of a concern for case-control than quantitative GWAS. For quantitative traits, experimental or genotyping artifacts are unlikely to be correlated with the trait value. However, case and control sets are often collected independently so that experimental artifacts could make cases more similar to other cases and controls more similar to other controls. These artificial case-control diferences could be partitioned as 'heritability' in methods that utilize genome-wide similarity within and diferences between cases and controls."
-
-
-
-
-
-
-
- ![Screen Shot 2016-10-12 at 17.26.19](/Users/horta/Desktop/Screen Shot 2016-10-12 at 17.26.19.png)
-
- ![Screen Shot 2016-10-12 at 17.12.54](/Users/horta/Desktop/Screen Shot 2016-10-12 at 17.12.54.png)
