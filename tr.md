@@ -1,5 +1,6 @@
 # Generalised linear mixed models for genetic analysis
 
+<script src="bower_components/mermaid/dist/mermaid.min.js"></script>
 
 $$
 % Shortcuts
@@ -99,9 +100,12 @@ g(\mat E[y|z]) = z
 $$
 The observed trait is then described via an exponential-family distribution chosen as to match the phenotype random nature.
 
+
 Fig. 1 shows the corresponding Graphical Model:
 
-<img src="img/model-graph.jpg" alt="model graph" style="width: 200px;"/>
+<img src="img/graph-model.png"></img>
+
+
 
 Therefore the user is free to choose the distribution that represent the observed process, as long as it can be completly defined by specifying its mean.
 
@@ -273,13 +277,16 @@ Later on we will be working with
 $$
 \mat K = v  ((1-\delta)\mat Q \mat S \mat Q\T + \delta \mat I)
 $$
-for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$, where $\mat Q\mat S\mat Q\T$ is the eigen-decomposition of $\mat B\mat B\T$. For convenience, let stick with $\mat K = \sigma_b^2 \mat Q\mat S \mat Q\T + \sigma_{\epsilon}^2 \mat I$ for now.
+for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$, where $\mat Q\mat S\mat Q\T$ is the economic eigen-decomposition (refer to Section BLA) of $\mat B\mat B\T$. For convenience, let stick with $\mat K = \sigma_b^2 \mat Q\mat S \mat Q\T + \sigma_{\epsilon}^2 \mat I$ for now.
 
-The following matrix definitions will help us infer a faster and numerically safe implementation (correct the bellow equations to account for the fact that I reparametrized K above)
+The following matrix definitions will help us infer a faster and numerically safe implementation
 $$
 \mcal A = (\sigma_{\eps}^2 \mat I + \tilde\Sigma)^{-1}\\
-\mcal B = \mat Q\T \mcal A \mat Q + \sigma_b^{-2} \mat S^{-1}
+\mcal B = \mat Q\T \mcal A \mat Q + \sigma_b^{-2} \mat S^{-1}\\
+\mcal C = (\sigma_{\eps}^2 \tilde{\mat T} + \mat I)^{-1}
 $$
+
+#### Posterior covariance and mean update
 
 Numerical safety, we should use the inverse of $\tilde \Sigma$ whenever we can. Thus let $\tilde{\mat T}=\tilde \Sigma^{-1}$ and $\tilde{\eita} = \tilde{\mat T} \tilde{\bmu}$ for convenience. We can write the matrix covariance and mean of the approximated posterior as
 $$
@@ -292,12 +299,63 @@ $$
 \boldsymbol \mu = (\mat I + \mat K \tilde{\mat T})^{-1} \mathbf m
                      + (\mat I + \mat K \tilde{\mat T})^{-1}
                      \mat K \tilde{\boldsymbol \eta}
-         = \tilde{\mat T}^{-1} (\mat A_1 -
+         = \tilde{\mat T}^{-1} (\mcal A -
            \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mathbf m +
            \tilde{\mat T}^{-1} (\mcal A - \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mat K \tilde{\eita}
 $$
 
+If $ \sigma_{\eps}^2=0$ (i.e., $\delta = 0$), which is the case of no-overdispersion, the above equations simplify to
+$$
+\Sigma = (\mat I - \mat Q\mcal B^{-1}\mat Q\T\mcal A)\sigma_b^2\mat Q\mat S\mat Q\T
+$$
 
+$$
+\bmu = \mathbf m - \mat Q \mcal B^{-1}\mat Q\T \mcal A\mathbf m + \mat K \eita - \mat Q\mcal B^{-1}\mat Q\T \mcal A\mat K\tilde\eita
+$$
+
+#### Log marginal likelihood
+
+We will divide Eq. (X) in many parts but first observe that
+$$
+\sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)} = \frac{\tilde\bmu\T(\tilde{\mat T}^{-1} + \Sigma_{-})^{-1} \tilde\bmu}{2} - \tilde\bmu\T(\tilde{\mat T}^{-1} + \Sigma_{-})^{-1}\bmu_{-} + \bmu\T_{-}\frac{(\tilde{\mat T}^{-1} + \Sigma_{-})^{-1}}{2}\bmu_{-}
+$$
+Let
+$$
+
+\omega_1 = -\frac{1}{2} \log|\mat K + \tilde{\mat T}^{-1}| = -\frac{1}{2} \log|\mcal B| - \frac{1}{2} \log|\sigma_b^2\mat S| + \frac{1}{2} \log|\mcal A|
+
+$$
+
+$$
+\omega_2 = -\tilde\bmu\T\frac{(\mat K + \tilde{\mat T}^{-1})^{-1}}{2}\tilde\bmu +
+		\tilde\bmu\T\frac{(\tilde{\mat T}^{-1} + \Sigma_{-})^{-1}}{2}\tilde\bmu\\
+		= \frac{1}{2}\tilde\eita\T\left( -\tilde{\mat T}^{-1} \mcal A \tilde{\mat T}^{-1} +
+			\tilde{\mat T}^{-1} \mcal A\mat Q \mcal B^{-1} \mat Q\T\mcal A\tilde{\mat T}^{-1} + \tilde{\mat T}^{-1}
+			- (\tilde{\mat T} + \Sigma_{-}^{-1})^{-1}\right) \tilde\eita\\
+		= \frac{1}{2} \tilde\eita\T\left( \sigma_{\eps}^2(\sigma_{\eps}^2\tilde{\mat T} + \mat I)^{-1} +
+			\mcal C \mat Q \mcal B^{-1} \mat Q\T\mcal C + \tilde{\mat T}^{-1}
+				+ \Sigma_{-}^{-1})^{-1}\right) \tilde\eita
+$$
+
+$$
+\omega_3 = \frac{1}{2} \bmu_-\T (\tilde{\mat T}^{-1} + \Sigma_-)^{-1} (\bmu_- - 2\tilde\bmu)
+	=\frac{1}{2} \eita_-\T (\tilde{\mat T} + \Sigma_-^{-1})^{-1}(\tilde{\mat T} \bmu_- 2\tilde\eita)
+$$
+
+$$
+\omega_4 = \mathbf m\T(\mat K + \tilde{\mat T}^{-1})^{-1}\tilde\bmu = \mathbf m\T \mcal C \tilde\eita -
+	\mathbf m\T \mcal A\mat Q \mat B^{-1}\mat Q\T\mcal C \tilde\eita
+$$
+
+$$
+\omega_5 = -\frac{1}{2} \mathbf m\T(\mat K + \tilde{\mat T}^{-1})^{-1}\mathbf m = -\frac{1}{2}\mathbf m\T\mcal A\mathbf m +
+	\frac{1}{2} \mathbf m\T \mcal A \mat Q \mcal B^{-1} \mcal Q\T \mcal A \mathbf m
+$$
+
+$$
+\omega_6 = \frac{1}{2} \sum_i \log(\tilde\sigma_i^2 + \sigma_{-i}^2) = \frac{1}{2} (-\log|\tilde{\mat T}| +
+	\log|\tilde{\mat T} + \Sigma_-^{-1}| - \log|\Sigma_-^{-1}|)
+$$
 
 ### Derivation
 
@@ -447,6 +505,27 @@ $$
         = \Normal{z_i}{\sigma_i^2(\sigma_{-i}^{-2} \sigma_{-i}^2 (\sigma_i^{-2}\mu_i - \tilde \sigma_i^{-2} \tilde \mu_i) + \tilde \sigma_i^{-2}\tilde \mu_i)}{\sigma_i^2} \\
         = \Normal{z_i}{\mu_i}{\sigma_i^2}.
 $$
+
+## Definition
+
+**Eigendecomposition of a symmetric matrix.** Let $\mat A$ be a square symmetric matrix. $\mat Q\mat S\mat Q\T$ will be its eigendecomposition if $\mat Q$ is a matrix of columns composed by the eigenvectors of $\mat A$ and $\mat S$ a diagonal matrix composed of the corresponding eigenvalues.
+
+**Economic eigendecompositon.** Let $\mat A$ be a squared symmetric matrix. Its eigendecomposition can be written as
+$$
+\left[\begin{array}{2} \mat Q_0 & \mat Q_1\end{array}\right]
+
+\left[\begin{array}{2}
+\mat S_0 & 0 \\
+0              & \mat S_1
+\end{array}\right]
+
+\left[\begin{array}{2}
+\mat Q_0\T \\
+\mat Q_1\T
+\end{array}\right]
+$$
+
+for which $\mat S_0$ is the non-zero eigenvalues and $\mat S_1$ a matrix with zeros only. The above segregation uncovers the rank of $\mat A$ and make it clear that $\mat A = \mat Q_0 \mat S_0 \mat Q_0\T$, which is precisely what we call the economic eigendecomposition.
 
 ## Bibliography
 
