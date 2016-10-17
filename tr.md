@@ -379,6 +379,10 @@ $$
 	\log|\tilde{\mat T} + \Sigma_-^{-1}| - \log|\Sigma_-^{-1}|)
 $$
 
+$$
+\omega_7 = \sum_i \log \hat z_i
+$$
+
 The log marginal likelihood is just the summation of the above terms.
 
 ### Optimal fixed effect-sizes
