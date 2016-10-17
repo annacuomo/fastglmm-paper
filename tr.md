@@ -281,7 +281,7 @@ for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$, where $\mat Q
 Let us define
 $$
 \mcal A = \left\{\begin{gather}
-\tilde{\mat T} (\tilde{\mat T} + \sigma_{\eps}^{-2} \mat I)^{-1}\sigma_{\eps}^{-2} & \text{if } \sigma_{\eps}^2>0\\
+\tilde{\mat T} (\sigma^2_{\eps} \tilde{\mat T} + \mat I)^{-1} & \text{if } \sigma_{\eps}^2>0\\
 \tilde{\mat T} & \text{if } \sigma_{\eps}^2=0
 \end{gather}\right.\\
 \mcal B = \mat Q\T \mcal A \mat Q + \sigma_b^{-2} \mat S^{-1}\\
