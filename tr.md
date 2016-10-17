@@ -280,10 +280,7 @@ for $\sigma_b^2=v(1-\delta)$ and $\sigma_{\epsilon}^2 = v \delta$, where $\mat Q
 
 Let us define
 $$
-\mcal A = \left\{\begin{gather}
-\tilde{\mat T} (\sigma^2_{\eps} \tilde{\mat T} + \mat I)^{-1} & \text{if } \sigma_{\eps}^2>0\\
-\tilde{\mat T} & \text{if } \sigma_{\eps}^2=0
-\end{gather}\right.\\
+\mcal A =  \tilde{\mat T} \mathcal C\\
 \mcal B = \mat Q\T \mcal A \mat Q + \sigma_b^{-2} \mat S^{-1}\\
 \mcal C = (\sigma_{\eps}^2 \tilde{\mat T} + \mat I)^{-1}
 $$
@@ -293,17 +290,17 @@ $$
 Numerical safety, we should use the inverse of $\tilde \Sigma$ whenever we can. Thus let $\tilde{\mat T}=\tilde \Sigma^{-1}$ and $\tilde{\eita} = \tilde{\mat T} \tilde{\bmu}$ for convenience. We can write the matrix covariance and mean of the approximated posterior as
 $$
 \Sigma = (\mat I + \mat K \tilde{\mat T})^{-1}  \mat K =
-    \tilde{\mat T}^{-1} (\tilde{\mat T}^{-1} + \mat K)^{-1} \mat K = \tilde{\mat T}^{-1} (\mcal A -
-      \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A)\mat K
+    \tilde{\mat T}^{-1} (\tilde{\mat T}^{-1} + \mat K)^{-1} \mat K = (\mcal C -
+      \mcal C \mat Q \mcal B^{-1}\mat Q\T \mcal A)\mat K
 $$
 
 $$
 \boldsymbol \mu = (\mat I + \mat K \tilde{\mat T})^{-1} \mathbf m
                      + (\mat I + \mat K \tilde{\mat T})^{-1}
                      \mat K \tilde{\boldsymbol \eta}
-         = \tilde{\mat T}^{-1} (\mcal A -
-           \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mathbf m +
-           \tilde{\mat T}^{-1} (\mcal A - \mcal A \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mat K \tilde{\eita}
+         = (\mcal C -
+           \mcal C \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mathbf m +\\
+           (\mcal C - \mcal C \mat Q \mcal B^{-1}\mat Q\T \mcal A) \mat K \tilde{\eita}
 $$
 
 If $ \sigma_{\eps}^2=0$ (i.e., $\delta = 0$), which is the case of no-overdispersion, the above equations simplify to
