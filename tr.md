@@ -312,7 +312,7 @@ $$
 $$
 
 $$
-\bmu = \mathbf m - \mat Q \mcal B^{-1}\mat Q\T \mcal A\mathbf m + \mat K \eita - \mat Q\mcal B^{-1}\mat Q\T \mcal A\mat K\tilde\eita
+\bmu = \mathbf m - \mat Q \mcal B^{-1}\mat Q\T \mcal A\mathbf m + \mat K \tilde\eita - \mat Q\mcal B^{-1}\mat Q\T \mcal A\mat K\tilde\eita
 $$
 
 #### EP parameters update
@@ -388,7 +388,7 @@ $$
 \balpha = (\mat A\T(\tilde\Sigma + \mat K)^{-1}\mat A)^{-1} \mat A\T(\tilde\Sigma + \mat K)^{-1}\tilde\bmu
 $$
 
-#### Implementation
+#### Implem4entation
 
 $$
 \balpha = (\mat A\T \mcal A\mat A - \mat A\T \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal A\mat A)^{-1}
