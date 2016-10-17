@@ -392,7 +392,7 @@ $$
 \balpha = (\mat A\T(\tilde\Sigma + \mat K)^{-1}\mat A)^{-1} \mat A\T(\tilde\Sigma + \mat K)^{-1}\tilde\bmu
 $$
 
-#### Implem4entation
+#### Implementation
 
 $$
 \balpha = (\mat A\T \mcal A\mat A - \mat A\T \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal A\mat A)^{-1}
