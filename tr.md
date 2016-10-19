@@ -32,6 +32,10 @@ $$
 % KL divergence
 \newcommand{\KL}[2]{\text{KL}\left[\, {#1}  \,||\, {#2} \,\right]}
 
+% Derivative
+\newcommand{\diff}[2]{\frac{ \mathrm{d} {#1} }{ \mathrm{d} {#2} }}
+
+
 % Matrix
 \newcommand{\mat}{\mathrm}
 
@@ -42,8 +46,9 @@ $$
 
 \newcommand{EP}{\text{EP}}
 
-\normal{1}{2}, \Normal{1}{2}{2}, \data, \outcome, \balpha, \bbeta, \bepsilon, \expfam{1}, \, \Pr{a=0}, \Ind{x>0}
-\KL{p(x)}{q(x)}, \mat A, \mcal N
+\normal{1}{2}, \Normal{1}{2}{2}, \data, \outcome, \balpha, \bbeta,\\
+\bepsilon, \expfam{1}, \, \Pr{a=0}, \Ind{x>0}
+\KL{p(x)}{q(x)}, \mat A, \mcal N, \diff{y}{x}
 $$
 
 ## Abstract
@@ -270,6 +275,16 @@ $$
 \sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
 $$
 
+Derivative
+
+
+$$
+\diff{\log p(\mathbf y)_{\EP}}{x} = \frac{1}{2} (\mathbf m -  \tilde\bmu)\T
+		(\mat K + \tilde\Sigma)^{-1} \diff{\mat K}{x} (\mat K + \tilde\Sigma)^{-1}
+	(\mathbf m -  \tilde\bmu) - (\mathbf m -  \tilde\bmu)\T(\mat K + \tilde\Sigma)^{-1}\\
+	\diff{\mathbf m}{x} - \frac{1}{2} \mathrm{tr}\left[ (\mat K + \tilde\Sigma)^{-1} \diff{\mat K}{x}\right]
+$$
+
 ### Implementation
 
 Later on we will be working with
@@ -290,7 +305,7 @@ $$
 Numerical safety, we should use the inverse of $\tilde \Sigma$ whenever we can. Thus let $\tilde{\mat T}=\tilde \Sigma^{-1}$ and $\tilde{\eita} = \tilde{\mat T} \tilde{\bmu}$ for convenience. We can write the matrix covariance and mean of the approximated posterior as
 $$
 \Sigma = (\mat I + \mat K \tilde{\mat T})^{-1}  \mat K =
-    \tilde{\mat T}^{-1} (\tilde{\mat T}^{-1} + \mat K)^{-1} \mat K = (\mcal C -
+    \tilde{\mat T}^{-1} (\mat K + \tilde{\mat T}^{-1})^{-1} \mat K = (\mcal C -
       \mcal C \mat Q \mcal B^{-1}\mat Q\T \mcal A)\mat K
 $$
 
@@ -382,11 +397,25 @@ $$
 
 The log marginal likelihood is just the summation of the above terms.
 
+#### Derivative
+
+Just observe that
+$$
+(\mat K + \tilde{\mat T}^{-1})^{-1} (\mathbf m - \tilde\bmu) = (\mat K + \tilde{\mat T}^{-1})^{-1} \mathbf m
+	-    (\mat K + \tilde{\mat T}^{-1})^{-1} \tilde\bmu \\
+	= (\mcal A - \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal A) \mathbf m -
+	(\mcal C - \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal C) \tilde\eita
+$$
+and
+$$
+(\mat K + \tilde{\mat T}^{-1})^{-1} = \mcal A - \mcal A\mat Q\mcal B^{-1}\mat Q\T\mcal A
+$$
+
 ### Optimal fixed effect-sizes
 
 The optimal $\balpha$, assuming that everything else is fixed, is given by taking the gradient of the log marginal likelihood and setting it to zero:
 $$
-\balpha = (\mat A\T(\tilde\Sigma + \mat K)^{-1}\mat A)^{-1} \mat A\T(\tilde\Sigma + \mat K)^{-1}\tilde\bmu
+\balpha = (\mat A\T(\mat K + \tilde{\mat T}^{-1})^{-1}\mat A)^{-1} \mat A\T(\mat K + \tilde{\mat T}^{-1})^{-1}\tilde\bmu
 $$
 
 #### Implementation
