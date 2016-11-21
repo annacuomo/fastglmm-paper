@@ -1,0 +1,49 @@
+## Bibliography
+
+FALCONER, D.S., 1965. The inheritance of liability to certain diseases, estimated from the incidence among relatives. Annals of Human Genetics, 29(1), pp.51–76. Available at: http://onlinelibrary.wiley.com/doi/10.1111/j.1469-1809.1965.tb00500.x/abstract.
+
+Lee, S.H. et al., 2011. Estimating Missing Heritability for Disease from Genome-wide Association Studies. The American Journal of Human Genetics, 88(3), pp.294–305. Available at: http://www.cell.com/ajhg/abstract/S0002-9297(11)00020-6.
+
+McCullagh, P. & Nelder, J. A. (1989), Generalized Linear Models , Chapman & Hall / CRC , London.
+
+## Appendix
+
+### Probability distributions
+
+| name        | pmf/pdf                                  | parameters                           | support                    | mean            | variance          |
+| ----------- | ---------------------------------------- | ------------------------------------ | -------------------------- | --------------- | ----------------- |
+| Binomial    | ${n \choose ny} p^{ny}(1-p)^{n-ny}$      | $n\in \{1, 2, \dots\}\\p\in[0,1]$    | $y=\{0/n, 1/n, \dots, 1\}$ | $p$             | $p(1-p)/n$        |
+| Bernoulli   | set $n=1$                                |                                      |                            |                 |                   |
+| Gamma       | $\frac{(ay)^{a-1} e^{-\frac{ay}{s}} a}{\Gamma(a)s^a}$ | $a>0\text{ shape}\\s>0 \text{ rate}$ | $y \in [0, +\infty)$       | $s$             | $s^2/a$           |
+| Exponential | set $a=1$                                |                                      |                            | $1$             | $1/s$             |
+| Poisson     | $\frac{\lambda^y e^{-\lambda}}{y!}$      | $\lambda > 0$                        | $y \in \{0, 1, \dots\}$    | $\lambda$       | $\lambda$         |
+| Geometric   | $(1-p)^y p$                              | $p\in[0,1]$                          | $y \in \{0, 1, \dots\}$    | $\frac{1-p}{p}$ | $\frac{1-p}{p^2}$ |
+
+### Probability distribution in natural form
+
+| name        | pmf/pdf                                  | theta                   | phi  | a(phi)   |      |
+| ----------- | ---------------------------------------- | ----------------------- | ---- | -------- | ---- |
+| Binomial    | $\exp\left\{(y\theta - \log(1+e^\theta))/n^{-1} + \log {n \choose yn}\right\}$ | $\log\{\frac{p}{1-p}\}$ | $n$  | $1/\phi$ |      |
+| Bernoulli   |                                          |                         |      |          |      |
+| Gamma       | $\exp\left\{(y\theta - \log(-\theta^{-1}))/a^{-1}\right\} + a\log(a) + (a-1)\log(y) - \log\Gamma(a)\}$ | $-1/s$                  | $a$  | $1/\phi$ |      |
+| Exponential |                                          |                         |      |          |      |
+| Poisson     | $\exp\left\{(y\theta - e^\theta) - \log(y!)\right\}$ | $\log(\lambda)$         | $1$  |          |      |
+| Geometric   | $\exp\left\{y\theta + \log(1-e^\theta)\right\}$ | $\log(1-p)$             | $1$  |          |      |
+
+### Info I don't want to forget
+
+"For binary traits, such as disease, familial resemblance is usually parameterized on an unobserved continuous liability scale so that the heritability is independent of disease prevalence. (FALCONER 1965; Lee et al. 2011)"
+
+"For complex diseases it would be very useful to apply the same estimation procedure to case-control GWAS data. However, there are three issues that need to be overcome to be able to estimate genetic variance for disease without bias and with computationally fast algorithms:
+
+Quality control (QC) of SNPs. QC is more of a concern for case-control than quantitative GWAS. For quantitative traits, experimental or genotyping artifacts are unlikely to be correlated with the trait value. However, case and control sets are often collected independently so that experimental artifacts could make cases more similar to other cases and controls more similar to other controls. These artificial case-control diferences could be partitioned as 'heritability' in methods that utilize genome-wide similarity within and diferences between cases and controls."
+
+
+
+
+
+
+
+![Screen Shot 2016-10-12 at 17.26.19](/Users/horta/Desktop/Screen Shot 2016-10-12 at 17.26.19.png)
+
+![Screen Shot 2016-10-12 at 17.12.54](/Users/horta/Desktop/Screen Shot 2016-10-12 at 17.12.54.png)
