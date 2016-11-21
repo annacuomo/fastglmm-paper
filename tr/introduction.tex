@@ -1,0 +1,14 @@
+\section{Introduction}
+
+We aim to unify commonly performed analysis in the genetic analysis community such as heritability estimation, genome-wide association studies, phenotype prediction in a broad sense (e.g., disease risk prediction), variance decomposition, accounting for population structure and family relatedness, regressing out instrumental noise, and many others, in the sense that heteregenous traits from many different sorts of stochastic nature could be performed in a non-adhoc manner, with little to no human intervention (we are not talking about preprocessing here, which obviously will always require some considerable human intervention). This clearly could be accomplished by general-purpose Monte Carlo sampling methods but at the expense of restricting it to s	mall dataset. Contrarily, we are aiming for at least dozens of thousands individuals and genome-wide scale number of genetic markers which nowadays easily break hunder of millions point.
+
+The above will be accomplished by the following items:
+
+1. Latent variable to model the genetic, environmental, and the covariate parts.
+2. Family of distributions for tackling may sorts of trait nature
+3. Link function connecting the latent variable to the observed outcome
+4. Fast method for integrating out nuisance parameters and to infer the one need for genetic analysis
+5. Convergence should be guaranteed without the need of human intervention
+6. A model that allows genetic analysis independently of the used outcome distribution
+7. It should be able to handle different trait stochastic nature jointly
+8. Afterall, the proposed method has to be empirically as accurate as Monte Carlo sampling methods

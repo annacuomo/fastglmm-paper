@@ -1,0 +1,11 @@
+\section{Genetic Association}
+
+We apply the likelihood-ratio test in order to find association between a genetic variantand a trait. Let Bnull be the covariates of the null model and let Balt be Bnull augmentedwith genetic variants to be tested for association with the trait. The marginal likelihood ofboth null and alternative models are maximized over the fixed effects and the variances σg2
+
+and (if under the Binomial model) σε2, giving rise to the estimations (βˆnull,σˆg2null,σˆε2null) and(βˆalt, σˆg2alt, σˆε2alt), respectively. The likelihood-ratio statistic is then given by
+$$
+ttest = −2 log p(y)null + 2 log p(y)alt,
+$$
+where the parameters of p(y)null and p(y)alt are given by (βˆnull, σˆg2null, σˆε2null) and
+
+(βˆalt,σˆg2alt,σˆε2alt), respectively. The ttest statistic is typically assumed to follow the χk dis-tribution under the hyphotesis that there is no association between the candidate geneticvariants and the trait, where the degrees of freedom k is given by the difference in the pa-rameters of the null and alternative models (i.e., the difference in the sizes of βˆnull and βˆalt).Naturally, we perfom experiments (the so-called p-value calibration) to assess the aboveassumption for each method that computes ttest.
