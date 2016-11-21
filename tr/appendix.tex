@@ -1,0 +1,35 @@
+\section{Appendix}
+
+\subsection{Probability distributions}
+
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label-1}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+name        & pmf/pdf                                               & parameters                           & support                    & mean            & variance          \\ \hline
+Binomial    & ${n \choose ny} p^{ny}(1-p)^{n-ny}$                   & $n\in \{1, 2, \dots\}p\in[0,1]$      & $y=\{0/n, 1/n, \dots, 1\}$ & $p$             & $p(1-p)/n$        \\ \hline
+Bernoulli   & set $n=1$                                             &                                      &                            &                 &                   \\ \hline
+Gamma       & $\frac{(ay)^{a-1} e^{-\frac{ay}{s}} a}{\Gamma(a)s^a}$ & $a>0\text{ shape}  s>0 \text{ rate}$ & $y \in [0, +\infty)$       & $s$             & $s^2/a$           \\ \hline
+Exponential & set $a=1$                                             &                                      &                            & $1$             & $1/s$             \\ \hline
+Poisson     & $\frac{\lambda^y e^{-\lambda}}{y!}$                   & $\lambda > 0$                        & $y \in \{0, 1, \dots\}$    & $\lambda$       & $\lambda$         \\ \hline
+Geometric   & $(1-p)^y p$                                           & $p\in[0,1]$                          & $y \in \{0, 1, \dots\}$    & $\frac{1-p}{p}$ & $\frac{1-p}{p^2}$ \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label-2}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+name        & pmf/pdf                                                                                                & theta                   & phi & a(phi)   &  \\ \hline
+Binomial    & $\exp\left\{(y\theta - \log(1+e^\theta))/n^{-1} + \log {n \choose yn}\right\}$                         & $\log\{\frac{p}{1-p}\}$ & $n$ & $1/\phi$ &  \\ \hline
+Bernoulli   &                                                                                                        &                         &     &          &  \\ \hline
+Gamma       & $\exp\left\{(y\theta - \log(-\theta^{-1}))/a^{-1}\right\} + a\log(a) + (a-1)\log(y) - \log\Gamma(a)\}$ & $-1/s$                  & $a$ & $1/\phi$ &  \\ \hline
+Exponential &                                                                                                        &                         &     &          &  \\ \hline
+Poisson     & $\exp\left\{(y\theta - e^\theta) - \log(y!)\right\}$                                                   & $\log(\lambda)$         & $1$ &          &  \\ \hline
+Geometric   & $\exp\left\{y\theta + \log(1-e^\theta)\right\}$                                                        & $\log(1-p)$             & $1$ &          &  \\ \hline
+\end{tabular}
+\end{table}
