@@ -23,3 +23,6 @@ cd tr
 xelatex main.tex
 open main.pdf
 ```
+
+As you can see, `tr/main.tex` is the main file for compiling the whole
+technical report.
