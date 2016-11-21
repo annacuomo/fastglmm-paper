@@ -32,32 +32,32 @@
 
 % font settings
 \defaultfontfeatures{Ligatures=TeX}
-\setmonofont{Source Code Pro Light}[BoldFont=Source Code Pro]
-\setmainfont{Lato Light}[
-    Numbers=OldStyle,
-    BoldFont=Lato Regular,
-    ItalicFont=Lato Light Italic,
-    BoldItalicFont=Lato Italic
-]
-\setsansfont{Lato Light}[
-    Numbers=OldStyle,
-    BoldFont=Lato Regular,
-    ItalicFont=Lato Light Italic,
-    BoldItalicFont=Lato Italic
-]
-\newfontfamily{\titlefont}{Lato Light}[
-    Numbers=OldStyle,
-    BoldFont=Lato Regular,
-    ItalicFont=Lato Light Italic,
-    BoldItalicFont=Lato Italic
-]
+% \setmonofont{Source Code Pro Light}[BoldFont=Source Code Pro]
+% \setmainfont{Lato Light}[
+%     Numbers=OldStyle,
+%     BoldFont=Lato Regular,
+%     ItalicFont=Lato Light Italic,
+%     BoldItalicFont=Lato Italic
+% ]
+% \setsansfont{Lato Light}[
+%     Numbers=OldStyle,
+%     BoldFont=Lato Regular,
+%     ItalicFont=Lato Light Italic,
+%     BoldItalicFont=Lato Italic
+% ]
+% \newfontfamily{\titlefont}{Lato Light}[
+%     Numbers=OldStyle,
+%     BoldFont=Lato Regular,
+%     ItalicFont=Lato Light Italic,
+%     BoldItalicFont=Lato Italic
+% ]
 
 % Font for chapter number
-\newfontfamily{\upperNumber}{Lato Light}[
-    BoldFont=Lato Regular,
-    ItalicFont=Lato Light Italic,
-    BoldItalicFont=Lato Italic
-]
+% \newfontfamily{\upperNumber}{Lato Light}[
+%     BoldFont=Lato Regular,
+%     ItalicFont=Lato Light Italic,
+%     BoldItalicFont=Lato Italic
+% ]
 
 % we now start creating the TM-styled code listing environments
 % the lstlisting environment is wrapped in an MD-frame
