@@ -36,115 +36,144 @@ considering Eq. (1).
 \section{Instance of the model}
 
 Given a dataset $\data = \{\mathbf y, \mathrm A, \mathrm B\}$ of $n$
-% individuals together with the observed distribution specification
-% $\outcome=\{\outcome_i\}_1^n$, where each
-% $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$
-% defines an (potentially distinct) exponential-family distribution and link
-% function, we have
-% $\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$
-% multivariate distributed according to
-% \begin{align*}
-%   \mathbf z \sim \normal{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm
-% 	B\T + \sigma^2_{\epsilon} \mathrm I}
-% \end{align*}
-% Moreover, we have now a connection between the latent space and the observed space
-% \begin{align*}
-%   p(y_i | z_i) = \expfam{y_i | \outcome_i, b'(\theta)=g^{-1}(z_i)}
-% \end{align*}
-% which fully describe the marginal likelihood
-% \begin{align*}
-%   p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T
-% 	\balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
-% 	\mathrm I} \mathrm d \mathbf z \tag{5}
-% \end{align*}
-% used in the maximum likelihood approach for parameter fitting.
-%
-% \subsection{Interpretation}
-%
-% \subsubsection{Bernoulli trait}
-%
-% Let $g(x) = \Phi^{-1}(x)$ be the so-called probit link function and consider the Bernoulli likelihood as a suitable distribution of the outcome. Conditioning on the latent variable $z$, we have
-% \begin{align*}
-% p(y|z) = \left\{\begin{gather}
-% g^{-1}(z) = \Phi(z) & \text{for } y = 1\\
-% 1-g^{-1}(z) = 1-\Phi(z) & \text{for } y = 0
-% \end{gather}\right.
-% \end{align*}
-% Let us define a random variable $\tilde y | z = z + e$ in which $z$ is given and $e$ is standard-Normally distributed random variable such that
-% \begin{align*}
-% \tilde y | z = \left\{\begin{gather}
-% 1 & \text{for } z + e > 0\\
-% 0 & \text{for } z + e \leq 0
-% \end{gather}\right.
-% \end{align*}
-% Its p.m.f can thus be written as
-% \begin{align*}
-% p(\tilde y | z) = \left\{\begin{gather}
-% \Pr{e > -z | z} = \int_{-z}^{+\infty} \Normal{x}{0}{1} \mathrm d x = \Phi(z)  & \text{for } 1\\
-% \Pr{e \leq -z | z} = \int_{-\infty}^{-z} \Normal{x}{0}{1} \mathrm d x = 1-\Phi(z) & \text{for } 0
-% \end{gather}\right.
-% \end{align*}
-% which proves that $p(y|z) = p(\tilde y|z)$. More generally, let $g(x)$ be any link function (TODO: I might need to assume symmetry here). The definition
-% \begin{align*}
-% p(\tilde y | z) = \left\{\begin{gather}
-% \Pr{e > -z | z} = g^{-1}(z)  & \text{for } 1\\
-% \Pr{e \leq -z | z} = 1-g^{-1}(z) & \text{for } 0
-% \end{gather}\right.
-% \end{align*}
-% together with equation $\tilde y | z = z + e$ determines the $e$ distribution via its c.d.f. $g^{-1}(z)$. For example, let $g(\cdot)$ be the so-called logit link function. We have $e$ distributed according to the zero-mean Logistic distribution and variance equal to $\pi^2/3$.
-%
-%
-%
-% A binary trait representing a disease can be defined as
-%
-% where $e \sim \normal{0}{\sigma_e^2}$ is the source of i.i.d. noise. (talk that $\sigma_{\epsilon}^2$ cannot be distinguished from $\sigma_e^2$ in the Binary case)
-%
-% The value of $z$ can now be understood as the genetic risk for a particular disease where $\mathbf b$ is a vector of genetic markers (e.g., SNPs) and $\bbeta$ is the effect-sizes of those markers. The fixed-effect component can account for non-genetic effects (e.g., smoke, sex, age) whose descriptors are in $\mathbf a$ and effect-sizes in $\balpha$ to be estimated by the algorithm.
-%
-% \subsubsection{Binomial trait}
-%
-% The above model can be naturally extended to the more general one with Binomial trait $y$. Let us now define a random variable
-% \begin{align*}
-% \tilde y | z = \sum_{j=1}^{ntrials} \Ind{z+e_j > 0}
-% \end{align*}
-% and the auxiliary one $\tilde y_j | z = \Ind{z+e_j > 0}$ such that $\tilde y = \sum_{j=1}^{ntrials} \tilde y_j$ conditioned on $z$, and $e_j$ are i.i.d. Since the order of the auxiliary variables does not matter, by combination we have
-% \begin{align*}
-% p(\tilde y|z) = {ntrials \choose \tilde y} (\Pr{e > -z|z})^{\tilde y} (\Pr{e \leq -z|z})^{ntrials - \tilde y} =
-% 	{ntrials \choose \tilde y} (g^{-1}(z))^{\tilde y} (1-g^{-1}(z))^{ntrials - \tilde y}
-% \end{align*}
-% where $e_j \sim \normal{0}{\sigma_e^2}$.
-%
-% I need to talk about the Binomial support $\{0, 1, \dots, ntrials\}$ versus $\{0/ntrials, 1/ntrials, \dots, 1\}$.
-%
-% A draw from the random variable y thus consists in drawing g and ε (only once), drawing
-% the i.i.d. variables e1, e2, . . . , and er and then counting how many times the sum μ+g+ε+es
-% is greater than zero. As a concrete example, suppose that a particular cell have been cloned
-% r times. Those cells would have the same genetic value g since x is the same for each cell
-% and the additive effects u are also the same as they are locus-dependent only. Also, those
-% cells would have the same ε effect due to unaccounted causes that stay constant over the
-% experiment (e.g., batch effect). Let ys represent whether the cloned cell s has survived
-% (ys = 1) or not (ys = 0) during a period of time. The number of cells that survive could
-% be modelled by y, and one might be interested to know how much of their fate is due to
-% genetics. In this context, it makes sense to model such responsability as the variance of g
-% over the total variance:
-%
-% The observable trait variable y conditioned on g and ε is given by a summation of i.i.d.
-% Bernoulli variables having the probability of succcess equal to Φ((μ + g + ε)/σe)). Precisely,
-% the likelihood is given by
-%
-% \subsubsection{Poisson trait}
-%
-% As far as I know, this is just Binomial with $ntrials \rightarrow +\infty$. Similar interpretation should happen here.
-%
-% \subsubsection{Exponential trait}
-%
-%
-%
-% \subsection{Approximation to probability distribution}
-%
-% I think we should discuss the methods out there, including the Monte Carlo ones. We should say that despite its simplicity Monte Carlo methods are slow and there is no convergence guarantee (and thus human intervention here is required). We should also discuss deterministic ones like Variational Bayes and explain why we have chosen EP. This can be done by saying that we need a accurate marginal likelihood estimation for model comparison and as such EP has been shown to be empirically unbiased when it comes to moment approximation. As a matter of fact, EP is based on moment matching afterall. Even thought it might not be the most desirable method for posterior point-estimation (as it tends to cover multiple bumps, while VB tends to do the opposite), we really want to know the overall mass (zeroth moment of a random variable $\mathbf x$ defined by $p(\mathbf x) = p(\mathbf y, \mathbf x)$). Moreover, we should show that we always have only one bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
-%
-% \subsection{Expectation Propagation}
+individuals together with the observed distribution specification
+$\outcome=\{\outcome_i\}_1^n$, where each
+$\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$
+defines an (potentially distinct) exponential-family distribution and link
+function, we have
+$\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$
+multivariate distributed according to
+\begin{align*}
+  \mathbf z \sim \normal{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm
+	B\T + \sigma^2_{\epsilon} \mathrm I}
+\end{align*}
+Moreover, we have now a connection between the latent space and the observed space
+\begin{align*}
+  p(y_i | z_i) = \expfam{y_i | \outcome_i, b'(\theta)=g^{-1}(z_i)}
+\end{align*}
+which fully describe the marginal likelihood
+\begin{align*}
+  p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T
+	\balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
+	\mathrm I} \mathrm d \mathbf z \tag{5}
+\end{align*}
+used in the maximum likelihood approach for parameter fitting.
+
+\subsection{Interpretation}
+
+\subsubsection{Bernoulli trait}
+
+Let $g(x) = \Phi^{-1}(x)$ be the so-called probit link function and consider the
+Bernoulli likelihood as a suitable distribution of the outcome. Conditioning on
+the latent variable $z$, we have
+\begin{align*}
+  p(y|z) = \begin{cases}
+  g^{-1}(z) = \Phi(z) & \text{for } y = 1\\
+  1-g^{-1}(z) = 1-\Phi(z) & \text{for } y = 0
+  \end{cases}
+\end{align*}
+Let us define a random variable $\tilde y | z = z + e$ in which $z$ is given and
+$e$ is standard-Normally distributed random variable such that
+\begin{align*}
+  \tilde y | z = \begin{cases}
+  1 & \text{for } z + e > 0\\
+  0 & \text{for } z + e \leq 0
+  \end{cases}
+\end{align*}
+Its p.m.f can thus be written as
+\begin{align*}
+  p(\tilde y | z) = \begin{cases}
+  \Pr{e > -z | z} = \int_{-z}^{+\infty} \Normal{x}{0}{1} \mathrm d x = \Phi(z)  & \text{for } 1\\
+  \Pr{e \leq -z | z} = \int_{-\infty}^{-z} \Normal{x}{0}{1} \mathrm d x = 1-\Phi(z) & \text{for } 0
+  \end{cases}
+\end{align*}
+which proves that $p(y|z) = p(\tilde y|z)$. More generally, let $g(x)$ be any
+link function (TODO: I might need to assume symmetry here). The definition
+\begin{align*}
+  p(\tilde y | z) = \begin{cases}
+  \Pr{e > -z | z} = g^{-1}(z)  & \text{for } 1\\
+  \Pr{e \leq -z | z} = 1-g^{-1}(z) & \text{for } 0
+  \end{cases}
+\end{align*}
+together with equation $\tilde y | z = z + e$ determines the $e$ distribution
+via its c.d.f. $g^{-1}(z)$. For example, let $g(\cdot)$ be the so-called logit
+link function. We have $e$ distributed according to the zero-mean Logistic
+distribution and variance equal to $\pi^2/3$.
+
+
+
+A binary trait representing a disease can be defined as
+
+where $e \sim \normal{0}{\sigma_e^2}$ is the source of i.i.d. noise. (talk that
+$\sigma_{\epsilon}^2$ cannot be distinguished from $\sigma_e^2$ in the Binary
+case)
+
+The value of $z$ can now be understood as the genetic risk for a particular
+disease where $\mathbf b$ is a vector of genetic markers (e.g., SNPs) and
+$\bbeta$ is the effect-sizes of those markers. The fixed-effect component can
+account for non-genetic effects (e.g., smoke, sex, age) whose descriptors are in
+$\mathbf a$ and effect-sizes in $\balpha$ to be estimated by the algorithm.
+
+\subsubsection{Binomial trait}
+
+The above model can be naturally extended to the more general one with Binomial
+trait $y$. Let us now define a random variable
+\begin{align*}
+\tilde y | z = \sum_{j=1}^{ntrials} \Ind{z+e_j > 0}
+\end{align*}
+and the auxiliary one $\tilde y_j | z = \Ind{z+e_j > 0}$ such that $\tilde y = \sum_{j=1}^{ntrials} \tilde y_j$ conditioned on $z$, and $e_j$ are i.i.d. Since the order of the auxiliary variables does not matter, by combination we have
+\begin{align*}
+p(\tilde y|z) = {ntrials \choose \tilde y} (\Pr{e > -z|z})^{\tilde y} (\Pr{e \leq -z|z})^{ntrials - \tilde y} =
+	{ntrials \choose \tilde y} (g^{-1}(z))^{\tilde y} (1-g^{-1}(z))^{ntrials - \tilde y}
+\end{align*}
+where $e_j \sim \normal{0}{\sigma_e^2}$.
+
+I need to talk about the Binomial support $\{0, 1, \dots, ntrials\}$ versus
+$\{0/ntrials, 1/ntrials, \dots, 1\}$.
+
+A draw from the random variable y thus consists in drawing g and ε (only once),
+drawing the i.i.d. variables e1, e2, . . . , and er and then counting how many
+times the sum μ+g+ε+es is greater than zero. As a concrete example, suppose that
+a particular cell have been cloned r times. Those cells would have the same
+genetic value g since x is the same for each cell and the additive effects u are
+also the same as they are locus-dependent only. Also, those cells would have the
+same ε effect due to unaccounted causes that stay constant over the experiment
+(e.g., batch effect). Let ys represent whether the cloned cell s has survived
+(ys = 1) or not (ys = 0) during a period of time. The number of cells that
+survive could be modelled by y, and one might be interested to know how much of
+their fate is due to genetics. In this context, it makes sense to model such
+responsability as the variance of g over the total variance:
+
+The observable trait variable y conditioned on g and ε is given by a summation
+of i.i.d. Bernoulli variables having the probability of succcess equal to Φ((μ +
+g + ε)/σe)). Precisely, the likelihood is given by
+
+\subsubsection{Poisson trait}
+
+As far as I know, this is just Binomial with $ntrials \rightarrow +\infty$.
+Similar interpretation should happen here.
+
+\subsubsection{Exponential trait}
+
+
+
+\subsection{Approximation to probability distribution}
+
+I think we should discuss the methods out there, including the Monte Carlo ones.
+We should say that despite its simplicity Monte Carlo methods are slow and there
+is no convergence guarantee (and thus human intervention here is required). We
+should also discuss deterministic ones like Variational Bayes and explain why we
+have chosen EP. This can be done by saying that we need a accurate marginal
+likelihood estimation for model comparison and as such EP has been shown to be
+empirically unbiased when it comes to moment approximation. As a matter of fact,
+EP is based on moment matching afterall. Even thought it might not be the most
+desirable method for posterior point-estimation (as it tends to cover multiple
+bumps, while VB tends to do the opposite), we really want to know the overall
+mass (zeroth moment of a random variable $\mathbf x$ defined by $p(\mathbf x) =
+p(\mathbf y, \mathbf x)$). Moreover, we should show that we always have only one
+bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
+
+\subsection{Expectation Propagation}
 %
 % EP is a deterministic method for approximating probability distributions in order to solve complicated integrals as the one define in Eq. (5). Here EP will replace a given likelihood p(y|z) from some exponential-family distribution by a non-normalized univariate Normal p.d.f
 % \begin{align*}
