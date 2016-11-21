@@ -17,6 +17,7 @@ brew tap caskroom/fonts
 brew cask install font-source-code-pro
 ```
 
+You can now enter into the `tr` folder and compile the pdf:
 ```bash
 cd tr
 xelatex main.tex
