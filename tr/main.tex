@@ -1,23 +1,53 @@
-% Preamble
-% ---
-\documentclass{article}
+\documentclass{TMarticle}
 
-% Packages
-% ---
-\usepackage{amsmath} % Advanced math typesetting
-\usepackage[utf8]{inputenc} % Unicode support (Umlauts etc.)
-\usepackage[ngerman]{babel} % Change hyphenation rules
-\usepackage{hyperref} % Add a link to your document
-\usepackage{graphicx} % Add pictures to your document
-\usepackage{listings} % Source code formatting and highlighting
+\usepackage[]{lipsum}
+\usepackage[]{paralist}
+\usepackage[]{amsmath}
+\usepackage[]{amssymb}
+\definecolor{TMcodeBackground}{RGB}{240, 240, 240}
+\definecolor{TMbulletinBackground}{RGB}{240, 240, 240}
+\author{Danilo Horta}
+
+\title{Generalised linear mixed models for genetic analysis}
 
 \begin{document}
 
-The development of computationally efficient yet accurate models has received considerable attention in statistical genetics. In particular linear mixed models (LMMs) are now a well established tool and provide powerful control for population structure and relatedness, allow to aggregate across multiple causal variants in gene sets and can be used to leverage phenotype correlations between multiple (related) traits.
+\maketitle
 
-However, the vast majority of existing LMM approaches assume that phenotypes are continuous with Gaussian distributed residuals. This assumption is clearly violated in case/control studies but also in the context of a many sequencing-based phenotypes, such as Poisson distributed read count data or traits defined as the Binomial ratio of (typically small) count values. While generalised linear mixed models provide in principle an established solution to this problem, "exact" methods for parameter inference require expensive MCMC simulations and hence are not applicable to large cohorts. Consequently, non-Gaussian observation likelihood are in practice either ignored or one is left with methods that provide crude approximations to estimate the trait on a latent liability scale.
+The development of computationally efficient yet accurate models has received
+considerable attention in statistical genetics. In particular linear mixed
+models (LMMs) are now a well established tool and provide powerful control for
+population structure and relatedness, allow to aggregate across multiple causal
+variants in gene sets and can be used to leverage phenotype correlations between
+multiple (related) traits.
 
-To address this, we here propose a highly effective deterministic algorithm QEP-LMM that enables near-exact marginalising over the latent liability scale within the LMM framework. This model provides quadratic and in some instances even linear run-time complexity in the number of samples, thus enabling the analysis of datasets with tens of thousands of individuals in the context of genome-wide tests. We extensively compared our model with existing state-of-the-art tools (Gaussian LMM, GCTA, LTMLM, MACAU, and LEAP), both in terms of power to detect associations as well as accuracy for heritability estimation, phenotype prediction, and computational performance. Consistently across settings, we find substantial improvements over current approximate methods. Remarkably, we observe that QEP-LMM achieves near-identical performance to exact MCMC approaches for generalised LMMs at a runtime complexity that is comparable to a standard LMM. Finally, we provide empirical results to demonstrate practical utility of QEP-LMM in applications to data from the WTCCC and in the genetic analysis of splicing phenotypes in human LCLs.
+However, the vast majority of existing LMM approaches assume that phenotypes
+are continuous with Gaussian distributed residuals. This assumption is clearly
+violated in case/control studies but also in the context of a many
+sequencing-based phenotypes, such as Poisson distributed read count data or
+traits defined as the Binomial ratio of (typically small) count values. While
+generalised linear mixed models provide in principle an established solution to
+this problem, "exact" methods for parameter inference require expensive MCMC
+simulations and hence are not applicable to large cohorts. Consequently,
+non-Gaussian observation likelihood are in practice either ignored or one is
+left with methods that provide crude approximations to estimate the trait on a
+latent liability scale.
+
+To address this, we here propose a highly effective deterministic algorithm
+QEP-LMM that enables near-exact marginalising over the latent liability scale
+within the LMM framework. This model provides quadratic and in some instances
+even linear run-time complexity in the number of samples, thus enabling the
+analysis of datasets with tens of thousands of individuals in the context of
+genome-wide tests. We extensively compared our model with existing
+state-of-the-art tools (Gaussian LMM, GCTA, LTMLM, MACAU, and LEAP), both in
+terms of power to detect associations as well as accuracy for heritability
+estimation, phenotype prediction, and computational performance. Consistently
+across settings, we find substantial improvements over current approximate
+methods. Remarkably, we observe that QEP-LMM achieves near-identical performance
+to exact MCMC approaches for generalised LMMs at a runtime complexity that is
+comparable to a standard LMM. Finally, we provide empirical results to
+demonstrate practical utility of QEP-LMM in applications to data from the WTCCC
+and in the genetic analysis of splicing phenotypes in human LCLs.
 
 
 \end{document}
