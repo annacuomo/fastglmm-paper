@@ -174,114 +174,123 @@ p(\mathbf y, \mathbf x)$). Moreover, we should show that we always have only one
 bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
 
 \subsection{Expectation Propagation}
-%
-% EP is a deterministic method for approximating probability distributions in order to solve complicated integrals as the one define in Eq. (5). Here EP will replace a given likelihood p(y|z) from some exponential-family distribution by a non-normalized univariate Normal p.d.f
-% \begin{align*}
-% p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
-% \end{align*}
-%
-% Of course, our problem requires many likelihoods (potentially defined by heterogenous distributions) together with a multivariate Normal distribution (Eqs. (3-4)). For convenience, let us define $\mathbf m = \mathrm A\T \balpha$ and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I$. The EP approximation for our scenario is given by
-% \begin{align*}
-% p(\mathbf y) = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
-% \end{align*}
-% where $\tilde \theta_i = \{\tilde z_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
-%
-% Cavity distribution is defined by
-% \begin{align*}
-% p_{-i}(z_i|\mathbf y) = \Normal{z_i}{\mu_i}{\sigma^2_i} \prod_{j\neq i} p(y_j|z_j)
-% \end{align*}
-% and used into the minimization of the Kullback–Leibler divergence
-% \begin{align*}
-% \mathrm{KL}[ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} || p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}]
-% \end{align*}
-% The minimum of that divergence will provide an update for the values of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
-% \begin{align*}
-% \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
-% \end{align*}
-% where $\bmu = \Sigma(\mathrm K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ and $\Sigma=(\mathrm K^{-1} + \tilde\Sigma^{-1})^{-1}$.
-%
-% The EP marginal log-likelihood is found by integrating $\mathbf z$ out of $p(\mathbf y, \mathbf z)_{\EP}$ which gives us
-% \begin{align*}
-% \log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mathrm K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\T(\mathrm K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
-% \sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
-% \end{align*}
-%
-% \subsubsection{Implementation}
-%
-% An eigen decomposition and a change of variables allow us to write
-% \begin{align*}
-% \mathrm K = \sigma_t^2  ((1-\delta)\mathrm Q \mathrm S \mathrm Q^{T} + \delta \mathrm I)
-% \end{align*}
-% for $\sigma_b^2=\sigma_t^2(1-\delta)$ and $\sigma_b^2 = \sigma_t \delta$.
-%
-% The following matrix definitions will help us infer a faster and numerically safe implementation (correct the bellow equations to account for the fact that I reparametrized K above)
-% \begin{align*}
-% \mathrm A_0 = \sigma_b^{-2} \delta^{-1} \mathrm I \quad \text{if }\delta > 0\\
-% \mathrm A_1 = (\sigma_b^2 \delta \mathrm I + \tilde\Sigma)^{-1}\\
-% \mathrm A_1 = \mathrm A_0 (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} = \tilde{\mathrm T} - \tilde{\mathrm T} (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} \quad \text{if }\delta > 0\\
-% \mathrm A_1 = \tilde{\mathrm T} \quad \text{if } \delta = 0\\
-%
-% \mathrm A_2 = (\mathrm A_0 + \tilde{\mathrm T})^{-1} \quad \text{if } \delta > 0\\
-% \mathrm B_0 = \mathrm Q^T \mathrm A_0 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1} \quad \text{if } \delta > 0\\
-% \mathrm B_1 = \mathrm Q^T \mathrm A_1 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1}\\
-% \mathrm K^{-1} = \mathrm A_0 - \mathrm A_0 \mathrm Q \mathrm B_0^{-1} \mathrm Q^T \mathrm A_0 \quad \text{if } \delta > 0\\
-% (\mathrm K + \tilde{\Sigma})^{-1} = \mathrm A_1 - \mathrm A_1 \mathrm Q\mathrm B_1^{-1} \mathrm Q^T \mathrm A_1
-% \end{align*}
-%
-% #\subsubsection{Derivation}
-%
-% \begin{align*}
-% \Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
-% = \mathrm A_2 \mathrm K - \mathrm A_2 \mathrm Q
-%           \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathrm K
-% \end{align*}
-%
-% \begin{align*}
-% \bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
-% \mathrm K)^{-1} \mathrm K \tilde{\boldsymbol\eta}
-% = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathbf m +
-% \tilde{\Sigma}^{-1} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1)
-%           \mathrm K \tilde{\boldsymbol \eta}\\
-% = \mathrm A_2 \mathbf m - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathbf m
-%          + \mathrm A_2 \mathrm K \tilde{\boldsymbol \eta} - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T
-%            \mathrm A_1 \mathrm K \tilde{\boldsymbol \eta}
-% \end{align*}
-%
-%
-% \begin{align*}
-% \Sigma = (\mathrm K^{-1} + \tilde{\Sigma}^{-1})^{-1}\\
-% \bmu = \Sigma (\mathrm K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
-% \end{align*}
-%
-% \subsection{Numerical integration}
-%
-% We want to compute
-% \begin{align*}
-% \int_{-\infty}^{+\infty} z^m \expfam{y |\outcome, g(b'(\theta))=z} \Normal{z}{\mu}{\sigma^2}\mathrm dz
-% \end{align*}
-% for $m\in\{0, 1, 2\}$ in less than a millisecond for a single-core machine. A method that solves this problem must also provide error guarantees.
-%
-% A Normal distribution can also be written as
-% \begin{align*}
-% \Normal{x}{\mu}{\sigma^2} = \exp\{(x\theta - \theta^2/2)/\phi - (x^2/\phi + \log(2\pi\phi))/2\}
-% \end{align*}
-%
-% Let us define
-% \begin{align*}
-% h(\theta)= \log(\expfam{y|\outcome, \theta=z} \Normal{z}{\mu}{\sigma^2}) - f_c(y, \theta) +
-% 		\mu^2/(2\sigma^2) + \log(2\pi\sigma^2)/2\\
-% 		=\theta(y/f_a(\phi) + \mu/\sigma^2) - \theta^2/(2\sigma^2) - f_b(\theta)/f_a(\phi)
-% \end{align*}
-% and derive
-%
-%
-% \begin{align*}
-% h'(\theta) = y/f_a(\phi) + \mu/\sigma^2 - \theta/\sigma^2 - f'_b(\theta)/f_a(\phi)\\
-% h''(\theta) = -1/\sigma^2 - f''_b(\theta)/f_a(\phi)
-% \end{align*}
-% Its second-order Taylor expansion, after some simplification, is
-% \begin{align*}
-% \tilde h(\theta) = -f_b(\theta_0)/f_a(\phi) + (f'_b(\theta_0)/f_a(\phi))\theta_0 - (f''_b(\theta_0)/f_a(\phi))\theta_0^2/2\\
-% 	+\theta (y/f_a(\phi) + \eta - f'_b(\theta_0)/a(\phi) + \theta_0 f''_b(\theta_0)/f_a(\phi))\\
-% 	+\theta^2(-\tau - f''_b(\theta_0))/2
-% \end{align*}
+
+EP is a deterministic method for approximating probability distributions in
+order to solve complicated integrals as the one define in Eq. (5). Here EP will
+replace a given likelihood p(y|z) from some exponential-family distribution by a
+non-normalized univariate Normal p.d.f
+\begin{align*}
+  p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
+\end{align*}
+
+Of course, our problem requires many likelihoods (potentially defined by
+heterogenous distributions) together with a multivariate Normal distribution
+(Eqs. (3-4)). For convenience, let us define $\mathbf m = \mathrm A\T \balpha$
+and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
+\mathrm I$. The EP approximation for our scenario is given by
+\begin{align*}
+p(\mathbf y) = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
+\end{align*}
+where $\tilde \theta_i = \{\tilde z_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
+
+Cavity distribution is defined by
+\begin{align*}
+p_{-i}(z_i|\mathbf y) = \Normal{z_i}{\mu_i}{\sigma^2_i} \prod_{j\neq i} p(y_j|z_j)
+\end{align*}
+and used into the minimization of the Kullback–Leibler divergence
+\begin{align*}
+\mathrm{KL}[ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} || p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}]
+\end{align*}
+The minimum of that divergence will provide an update for the values of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
+\begin{align*}
+\frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
+\end{align*}
+where $\bmu = \Sigma(\mathrm K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ and $\Sigma=(\mathrm K^{-1} + \tilde\Sigma^{-1})^{-1}$.
+
+The EP marginal log-likelihood is found by integrating $\mathbf z$ out of $p(\mathbf y, \mathbf z)_{\EP}$ which gives us
+\begin{align*}
+\log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mathrm K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\T(\mathrm K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
+\sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
+\end{align*}
+
+\subsubsection{Implementation}
+
+An eigen decomposition and a change of variables allow us to write
+\begin{align*}
+\mathrm K = \sigma_t^2  ((1-\delta)\mathrm Q \mathrm S \mathrm Q^{T} + \delta \mathrm I)
+\end{align*}
+for $\sigma_b^2=\sigma_t^2(1-\delta)$ and $\sigma_b^2 = \sigma_t \delta$.
+
+The following matrix definitions will help us infer a faster and numerically
+safe implementation (correct the bellow equations to account for the fact that I
+reparametrized K above)
+\begin{align*}
+\mathrm A_0 = \sigma_b^{-2} \delta^{-1} \mathrm I \quad \text{if }\delta > 0\\
+\mathrm A_1 = (\sigma_b^2 \delta \mathrm I + \tilde\Sigma)^{-1}\\
+\mathrm A_1 = \mathrm A_0 (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} = \tilde{\mathrm T} - \tilde{\mathrm T} (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} \quad \text{if }\delta > 0\\
+\mathrm A_1 = \tilde{\mathrm T} \quad \text{if } \delta = 0\\
+\mathrm A_2 = (\mathrm A_0 + \tilde{\mathrm T})^{-1} \quad \text{if } \delta > 0\\
+\mathrm B_0 = \mathrm Q^T \mathrm A_0 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1} \quad \text{if } \delta > 0\\
+\mathrm B_1 = \mathrm Q^T \mathrm A_1 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1}\\
+\mathrm K^{-1} = \mathrm A_0 - \mathrm A_0 \mathrm Q \mathrm B_0^{-1} \mathrm Q^T \mathrm A_0 \quad \text{if } \delta > 0\\
+(\mathrm K + \tilde{\Sigma})^{-1} = \mathrm A_1 - \mathrm A_1 \mathrm Q\mathrm B_1^{-1} \mathrm Q^T \mathrm A_1
+\end{align*}
+
+\subsubsection{Derivation}
+
+\begin{align*}
+\Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
+= \mathrm A_2 \mathrm K - \mathrm A_2 \mathrm Q
+          \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathrm K
+\end{align*}
+
+\begin{align*}
+\bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
+\mathrm K)^{-1} \mathrm K \tilde{\boldsymbol\eta}
+= \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathbf m +
+\tilde{\Sigma}^{-1} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1)
+          \mathrm K \tilde{\boldsymbol \eta}\\
+= \mathrm A_2 \mathbf m - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathbf m
+         + \mathrm A_2 \mathrm K \tilde{\boldsymbol \eta} - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T
+           \mathrm A_1 \mathrm K \tilde{\boldsymbol \eta}
+\end{align*}
+
+
+\begin{align*}
+\Sigma = (\mathrm K^{-1} + \tilde{\Sigma}^{-1})^{-1}\\
+\bmu = \Sigma (\mathrm K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
+\end{align*}
+
+\subsection{Numerical integration}
+
+We want to compute
+\begin{align*}
+\int_{-\infty}^{+\infty} z^m \expfam{y |\outcome, g(b'(\theta))=z} \Normal{z}{\mu}{\sigma^2}\mathrm dz
+\end{align*}
+for $m\in\{0, 1, 2\}$ in less than a millisecond for a single-core machine. A
+method that solves this problem must also provide error guarantees.
+
+A Normal distribution can also be written as
+\begin{align*}
+\Normal{x}{\mu}{\sigma^2} = \exp\{(x\theta - \theta^2/2)/\phi - (x^2/\phi + \log(2\pi\phi))/2\}
+\end{align*}
+
+Let us define
+\begin{align*}
+h(\theta)= \log(\expfam{y|\outcome, \theta=z} \Normal{z}{\mu}{\sigma^2}) - f_c(y, \theta) +
+		\mu^2/(2\sigma^2) + \log(2\pi\sigma^2)/2\\
+		=\theta(y/f_a(\phi) + \mu/\sigma^2) - \theta^2/(2\sigma^2) - f_b(\theta)/f_a(\phi)
+\end{align*}
+and derive
+
+
+\begin{align*}
+h'(\theta) = y/f_a(\phi) + \mu/\sigma^2 - \theta/\sigma^2 - f'_b(\theta)/f_a(\phi)\\
+h''(\theta) = -1/\sigma^2 - f''_b(\theta)/f_a(\phi)
+\end{align*}
+Its second-order Taylor expansion, after some simplification, is
+\begin{align*}
+\tilde h(\theta) = -f_b(\theta_0)/f_a(\phi) + (f'_b(\theta_0)/f_a(\phi))\theta_0 - (f''_b(\theta_0)/f_a(\phi))\theta_0^2/2\\
+	+\theta (y/f_a(\phi) + \eta - f'_b(\theta_0)/a(\phi) + \theta_0 f''_b(\theta_0)/f_a(\phi))\\
+	+\theta^2(-\tau - f''_b(\theta_0))/2
+\end{align*}
