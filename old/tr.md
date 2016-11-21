@@ -281,8 +281,8 @@ Derivative
 $$
 \diff{\log p(\mathbf y)_{\EP}}{x} = \frac{1}{2} (\mathbf m -  \tilde\bmu)\T
 		(\mat K + \tilde\Sigma)^{-1} \diff{\mat K}{x} (\mat K + \tilde\Sigma)^{-1}
-	(\mathbf m -  \tilde\bmu) - (\mathbf m -  \tilde\bmu)\T(\mat K + \tilde\Sigma)^{-1}\\
-	\diff{\mathbf m}{x} - \frac{1}{2} \mathrm{tr}\left[ (\mat K + \tilde\Sigma)^{-1} \diff{\mat K}{x}\right]
+	(\mathbf m -  \tilde\bmu) - (\mathbf m -  \tilde\bmu)\T(\mat K + \tilde\Sigma)^{-1} \diff{\mathbf m}{x} -\\
+	\frac{1}{2} \mathrm{tr}\left[ (\mat K + \tilde\Sigma)^{-1} \diff{\mat K}{x}\right]
 $$
 
 ### Implementation
