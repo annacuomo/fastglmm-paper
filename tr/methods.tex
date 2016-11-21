@@ -3,43 +3,43 @@
 \subsection{Exponential-family}
 
 The exponential-family distributions for standard GLMMs are defined as
-\begin{*align}
+\begin{align*}
 y \sim \exp\{(y\theta - f_b(\theta))/f_a(\phi) + f_c(y, \phi)\}
-\end{*align}
+\end{align*}
 with two scalar paramaters $\theta$ and $\phi$ commonly regarded as XYZ and dispersion. The variable $y$ is naturally the outcome modelled by a distribution that emerges from the definition of the $f_{\cdot}(\cdot)$ functions and of the two parameters. As an example, the Bernoulli distribution with probability of success $p$ emerges from the above formulae by setting
-\begin{*align}
+\begin{align*}
 \theta = \log\left(\frac{p}{1-p}\right), \phi = 1, f_a(\phi) = \phi, f_b(\theta)=\log(1+e^\theta), f_c(y, \phi) = 0
-\end{*align}
+\end{align*}
 This class of distributions has the following two properties (McCullagh89):
-\begin{*align}
+\begin{align*}
 
 \mathrm E[y|\theta] = f'_b(\theta)\\
 \mathrm V[y|\theta] = f''_b(\theta) f_a(\phi) \tag{1}
 
-\end{*align}
+\end{align*}
 
 \subsection{Generalised linear mixed models}
 
 It requires first the definition of a twice-differentiable  function $g:\mathcal R \rightarrow \mathcal R$ which will be used to associate a latent random variable $z$ to the outcome expectation as follows:
-\begin{*align}
+\begin{align*}
 g(\mathrm E[y|\theta]) = z  \tag{2}
-\end{*align}
+\end{align*}
 The above equation makes clear the connection of $z$ with $\theta$ by also considering Eq. (1).
 
 ## Instance of the model
 
 Given a dataset $\data = \{\mathbf y, \mathrm A, \mathrm B\}$ of $n$ individuals together with the observed distribution specification $\outcome=\{\outcome_i\}_1^n$, where each $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$ defines an (potentially distinct) exponential-family distribution and link function, we have $\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$  multivariate distributed according to
-\begin{*align}
+\begin{align*}
 \mathbf z \sim \normal{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I} \tag{3}
-\end{*align}
+\end{align*}
 Moreover, we have now a connection between the latent space and the observed space
-\begin{*align}
+\begin{align*}
 p(y_i | z_i) = \expfam{y_i | \outcome_i, b'(\theta)=g^{-1}(z_i)} \tag{4}
-\end{*align}
+\end{align*}
 which fully describe the marginal likelihood
-\begin{*align}
+\begin{align*}
 p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I} \mathrm d \mathbf z \tag{5}
-\end{*align}
+\end{align*}
 used in the maximum likelihood approach for parameter fitting.
 
 \subsection{Interpretation}
@@ -47,33 +47,33 @@ used in the maximum likelihood approach for parameter fitting.
 \subsubsection{Bernoulli trait}
 
 Let $g(x) = \Phi^{-1}(x)$ be the so-called probit link function and consider the Bernoulli likelihood as a suitable distribution of the outcome. Conditioning on the latent variable $z$, we have
-\begin{*align}
+\begin{align*}
 p(y|z) = \left\{\begin{gather}
 g^{-1}(z) = \Phi(z) & \text{for } y = 1\\
 1-g^{-1}(z) = 1-\Phi(z) & \text{for } y = 0
 \end{gather}\right.
-\end{*align}
+\end{align*}
 Let us define a random variable $\tilde y | z = z + e$ in which $z$ is given and $e$ is standard-Normally distributed random variable such that
-\begin{*align}
+\begin{align*}
 \tilde y | z = \left\{\begin{gather}
 1 & \text{for } z + e > 0\\
 0 & \text{for } z + e \leq 0
 \end{gather}\right.
-\end{*align}
+\end{align*}
 Its p.m.f can thus be written as
-\begin{*align}
+\begin{align*}
 p(\tilde y | z) = \left\{\begin{gather}
 \Pr{e > -z | z} = \int_{-z}^{+\infty} \Normal{x}{0}{1} \mathrm d x = \Phi(z)  & \text{for } 1\\
 \Pr{e \leq -z | z} = \int_{-\infty}^{-z} \Normal{x}{0}{1} \mathrm d x = 1-\Phi(z) & \text{for } 0
 \end{gather}\right.
-\end{*align}
+\end{align*}
 which proves that $p(y|z) = p(\tilde y|z)$. More generally, let $g(x)$ be any link function (TODO: I might need to assume symmetry here). The definition
-\begin{*align}
+\begin{align*}
 p(\tilde y | z) = \left\{\begin{gather}
 \Pr{e > -z | z} = g^{-1}(z)  & \text{for } 1\\
 \Pr{e \leq -z | z} = 1-g^{-1}(z) & \text{for } 0
 \end{gather}\right.
-\end{*align}
+\end{align*}
 together with equation $\tilde y | z = z + e$ determines the $e$ distribution via its c.d.f. $g^{-1}(z)$. For example, let $g(\cdot)$ be the so-called logit link function. We have $e$ distributed according to the zero-mean Logistic distribution and variance equal to $\pi^2/3$.
 
 
@@ -87,14 +87,14 @@ The value of $z$ can now be understood as the genetic risk for a particular dise
 \subsubsection{Binomial trait}
 
 The above model can be naturally extended to the more general one with Binomial trait $y$. Let us now define a random variable
-\begin{*align}
+\begin{align*}
 \tilde y | z = \sum_{j=1}^{ntrials} \Ind{z+e_j > 0}
-\end{*align}
+\end{align*}
 and the auxiliary one $\tilde y_j | z = \Ind{z+e_j > 0}$ such that $\tilde y = \sum_{j=1}^{ntrials} \tilde y_j$ conditioned on $z$, and $e_j$ are i.i.d. Since the order of the auxiliary variables does not matter, by combination we have
-\begin{*align}
+\begin{align*}
 p(\tilde y|z) = {ntrials \choose \tilde y} (\Pr{e > -z|z})^{\tilde y} (\Pr{e \leq -z|z})^{ntrials - \tilde y} =
 	{ntrials \choose \tilde y} (g^{-1}(z))^{\tilde y} (1-g^{-1}(z))^{ntrials - \tilde y}
-\end{*align}
+\end{align*}
 where $e_j \sim \normal{0}{\sigma_e^2}$.
 
 I need to talk about the Binomial support $\{0, 1, \dots, ntrials\}$ versus $\{0/ntrials, 1/ntrials, \dots, 1\}$.
@@ -130,46 +130,46 @@ I think we should discuss the methods out there, including the Monte Carlo ones.
 \subsection{Expectation Propagation}
 
 EP is a deterministic method for approximating probability distributions in order to solve complicated integrals as the one define in Eq. (5). Here EP will replace a given likelihood p(y|z) from some exponential-family distribution by a non-normalized univariate Normal p.d.f
-\begin{*align}
+\begin{align*}
 p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
-\end{*align}
+\end{align*}
 
 Of course, our problem requires many likelihoods (potentially defined by heterogenous distributions) together with a multivariate Normal distribution (Eqs. (3-4)). For convenience, let us define $\mathbf m = \mathrm A\T \balpha$ and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon} \mathrm I$. The EP approximation for our scenario is given by
-\begin{*align}
+\begin{align*}
 p(\mathbf y) = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
-\end{*align}
+\end{align*}
 where $\tilde \theta_i = \{\tilde z_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
 
 Cavity distribution is defined by
-\begin{*align}
+\begin{align*}
 p_{-i}(z_i|\mathbf y) = \Normal{z_i}{\mu_i}{\sigma^2_i} \prod_{j\neq i} p(y_j|z_j)
-\end{*align}
+\end{align*}
 and used into the minimization of the Kullback–Leibler divergence
-\begin{*align}
+\begin{align*}
 \mathrm{KL}[ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} || p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}]
-\end{*align}
+\end{align*}
 The minimum of that divergence will provide an update for the values of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
-\begin{*align}
+\begin{align*}
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
-\end{*align}
+\end{align*}
 where $\bmu = \Sigma(\mathrm K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ and $\Sigma=(\mathrm K^{-1} + \tilde\Sigma^{-1})^{-1}$.
 
 The EP marginal log-likelihood is found by integrating $\mathbf z$ out of $p(\mathbf y, \mathbf z)_{\EP}$ which gives us
-\begin{*align}
+\begin{align*}
 \log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mathrm K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\T(\mathrm K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
 \sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
-\end{*align}
+\end{align*}
 
 \subsubsection{Implementation}
 
 An eigen decomposition and a change of variables allow us to write
-\begin{*align}
+\begin{align*}
 \mathrm K = \sigma_t^2  ((1-\delta)\mathrm Q \mathrm S \mathrm Q^{T} + \delta \mathrm I)
-\end{*align}
+\end{align*}
 for $\sigma_b^2=\sigma_t^2(1-\delta)$ and $\sigma_b^2 = \sigma_t \delta$.
 
 The following matrix definitions will help us infer a faster and numerically safe implementation (correct the bellow equations to account for the fact that I reparametrized K above)
-\begin{*align}
+\begin{align*}
 \mathrm A_0 = \sigma_b^{-2} \delta^{-1} \mathrm I \quad \text{if }\delta > 0\\
 \mathrm A_1 = (\sigma_b^2 \delta \mathrm I + \tilde\Sigma)^{-1}\\
 \mathrm A_1 = \mathrm A_0 (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} = \tilde{\mathrm T} - \tilde{\mathrm T} (\mathrm A_0 + \tilde{\mathrm T})^{-1} \tilde{\mathrm T} \quad \text{if }\delta > 0\\
@@ -180,17 +180,17 @@ The following matrix definitions will help us infer a faster and numerically saf
 \mathrm B_1 = \mathrm Q^T \mathrm A_1 \mathrm Q + (\sigma_b^2 \mathrm S)^{-1}\\
 \mathrm K^{-1} = \mathrm A_0 - \mathrm A_0 \mathrm Q \mathrm B_0^{-1} \mathrm Q^T \mathrm A_0 \quad \text{if } \delta > 0\\
 (\mathrm K + \tilde{\Sigma})^{-1} = \mathrm A_1 - \mathrm A_1 \mathrm Q\mathrm B_1^{-1} \mathrm Q^T \mathrm A_1
-\end{*align}
+\end{align*}
 
 #\subsubsection{Derivation}
 
-\begin{*align}
+\begin{align*}
 \Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
 = \mathrm A_2 \mathrm K - \mathrm A_2 \mathrm Q
           \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathrm K
-\end{*align}
+\end{align*}
 
-\begin{*align}
+\begin{align*}
 \bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
 \mathrm K)^{-1} \mathrm K \tilde{\boldsymbol\eta}
 = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathbf m +
@@ -199,43 +199,43 @@ The following matrix definitions will help us infer a faster and numerically saf
 = \mathrm A_2 \mathbf m - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathbf m
          + \mathrm A_2 \mathrm K \tilde{\boldsymbol \eta} - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T
            \mathrm A_1 \mathrm K \tilde{\boldsymbol \eta}
-\end{*align}
+\end{align*}
 
 
-\begin{*align}
+\begin{align*}
 \Sigma = (\mathrm K^{-1} + \tilde{\Sigma}^{-1})^{-1}\\
 \bmu = \Sigma (\mathrm K^{-1} \mathbf m + \tilde{\boldsymbol\eta})
-\end{*align}
+\end{align*}
 
 \subsection{Numerical integration}
 
 We want to compute
-\begin{*align}
+\begin{align*}
 \int_{-\infty}^{+\infty} z^m \expfam{y |\outcome, g(b'(\theta))=z} \Normal{z}{\mu}{\sigma^2}\mathrm dz
-\end{*align}
+\end{align*}
 for $m\in\{0, 1, 2\}$ in less than a millisecond for a single-core machine. A method that solves this problem must also provide error guarantees.
 
 A Normal distribution can also be written as
-\begin{*align}
+\begin{align*}
 \Normal{x}{\mu}{\sigma^2} = \exp\{(x\theta - \theta^2/2)/\phi - (x^2/\phi + \log(2\pi\phi))/2\}
-\end{*align}
+\end{align*}
 
 Let us define
-\begin{*align}
+\begin{align*}
 h(\theta)= \log(\expfam{y|\outcome, \theta=z} \Normal{z}{\mu}{\sigma^2}) - f_c(y, \theta) +
 		\mu^2/(2\sigma^2) + \log(2\pi\sigma^2)/2\\
 		=\theta(y/f_a(\phi) + \mu/\sigma^2) - \theta^2/(2\sigma^2) - f_b(\theta)/f_a(\phi)
-\end{*align}
+\end{align*}
 and derive
 
 
-\begin{*align}
+\begin{align*}
 h'(\theta) = y/f_a(\phi) + \mu/\sigma^2 - \theta/\sigma^2 - f'_b(\theta)/f_a(\phi)\\
 h''(\theta) = -1/\sigma^2 - f''_b(\theta)/f_a(\phi)
-\end{*align}
+\end{align*}
 Its second-order Taylor expansion, after some simplification, is
-\begin{*align}
+\begin{align*}
 \tilde h(\theta) = -f_b(\theta_0)/f_a(\phi) + (f'_b(\theta_0)/f_a(\phi))\theta_0 - (f''_b(\theta_0)/f_a(\phi))\theta_0^2/2\\
 	+\theta (y/f_a(\phi) + \eta - f'_b(\theta_0)/a(\phi) + \theta_0 f''_b(\theta_0)/f_a(\phi))\\
 	+\theta^2(-\tau - f''_b(\theta_0))/2
-\end{*align}
+\end{align*}
