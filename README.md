@@ -1,5 +1,8 @@
 # Readme
 
+[TODO](https://docs.google.com/document/d/1mDhirfAocMKSnjbefFEM5OWU6DWhoQlARX_NrqDh2Cg/edit)
+list in Google Docs.
+
 ## Technical report
 
 Enter into the `tr` folder and compile the pdf:
