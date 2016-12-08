@@ -7,6 +7,10 @@ list in Google Docs.
 
 - [Alternative splicing](https://github.com/glimix/alternative-splicing)
 
+## Experiments
+
+- [horta-exp](https://github.com/glimix/horta-exp)
+
 ## Technical report
 
 Enter into the `tr` folder and compile the pdf:
