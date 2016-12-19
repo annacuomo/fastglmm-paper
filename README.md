@@ -10,9 +10,14 @@
 
 ## Technical report
 
+Clone the repository via
+```bash
+git clone https://github.com/glimix/qep-paper.git
+```
+
 Enter into the `tr` folder and compile the pdf:
 ```bash
-cd tr
+cd qep-paper/tr
 xelatex main.tex
 open main.pdf
 ```
