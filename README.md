@@ -1,16 +1,16 @@
 # QEP Paper
 
-- [TODO][TODO]
-- [Manuscript][Manuscript]
-- [Figures](figures.key)
+- [TODO][TODO] (Google Doc file)
+- [Manuscript][Manuscript] (Google Doc file)
+- [Figures](figures.key) (Keynote file)
 
 [TODO]: https://docs.google.com/document/d/1mDhirfAocMKSnjbefFEM5OWU6DWhoQlARX_NrqDh2Cg/edit
 [Manuscript]: https://docs.google.com/document/d/1HA6aKhNrYh5xW34g0gtqVkfE5v0E02rYISAQpojsRAM/edit
 
 ## Experiments
 
-- [Alternative splicing analysis][Alternative splicing analysis]
-- [Source-code](https://github.com/glimix/horta-exp)
+- [Alternative splicing analysis][Alternative splicing analysis] (Google Doc file)
+- [Source-code](https://github.com/glimix/horta-exp) (GitHub Repo)
 
 [Alternative splicing analysis]: https://docs.google.com/document/d/19DvvZVtyyE1RO4Al_OsK83NrMqiU9WvE8MjBOrO65Ac/edit
 
