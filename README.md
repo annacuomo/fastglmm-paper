@@ -3,10 +3,6 @@
 - [TODO][TODO]
 - [Manuscript][Manuscript]
 
-## Datasets
-
-- [Alternative splicing][Alternative splicing]
-
 ## Experiments
 
 - [Alternative splicing analysis][Alternative splicing analysis]
@@ -23,6 +19,10 @@ open main.pdf
 
 As you can see, `tr/main.tex` is the main file for compiling the whole
 technical report.
+
+## Datasets
+
+- [Alternative splicing][Alternative splicing]
 
 [TODO]: https://docs.google.com/document/d/1mDhirfAocMKSnjbefFEM5OWU6DWhoQlARX_NrqDh2Cg/edit
 [Manuscript]: https://docs.google.com/document/d/1HA6aKhNrYh5xW34g0gtqVkfE5v0E02rYISAQpojsRAM/edit
