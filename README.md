@@ -1,5 +1,11 @@
 # QEP Paper
 
+## Requirements
+
+- [git lfs](https://git-lfs.github.com)
+
+## Main
+
 - [TODO][TODO] (Google Doc file)
 - [Manuscript][Manuscript] (Google Doc file)
 - [Figures](figures.key) (Keynote file)
