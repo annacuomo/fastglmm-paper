@@ -2,6 +2,7 @@
 
 - [TODO][TODO]
 - [Manuscript][Manuscript]
+- [Figures][figures]
 
 ## Experiments
 
