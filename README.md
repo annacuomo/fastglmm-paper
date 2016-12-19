@@ -2,12 +2,17 @@
 
 - [TODO][TODO]
 - [Manuscript][Manuscript]
-- [Figures][figures]
+- [Figures](figures.key)
+
+[TODO]: https://docs.google.com/document/d/1mDhirfAocMKSnjbefFEM5OWU6DWhoQlARX_NrqDh2Cg/edit
+[Manuscript]: https://docs.google.com/document/d/1HA6aKhNrYh5xW34g0gtqVkfE5v0E02rYISAQpojsRAM/edit
 
 ## Experiments
 
 - [Alternative splicing analysis][Alternative splicing analysis]
 - [Source-code](https://github.com/glimix/horta-exp)
+
+[Alternative splicing analysis]: https://docs.google.com/document/d/19DvvZVtyyE1RO4Al_OsK83NrMqiU9WvE8MjBOrO65Ac/edit
 
 ## Technical report
 
@@ -30,7 +35,4 @@ technical report.
 
 - [Alternative splicing][Alternative splicing]
 
-[TODO]: https://docs.google.com/document/d/1mDhirfAocMKSnjbefFEM5OWU6DWhoQlARX_NrqDh2Cg/edit
-[Manuscript]: https://docs.google.com/document/d/1HA6aKhNrYh5xW34g0gtqVkfE5v0E02rYISAQpojsRAM/edit
 [Alternative splicing]: https://github.com/glimix/alternative-splicing
-[Alternative splicing analysis]: https://docs.google.com/document/d/19DvvZVtyyE1RO4Al_OsK83NrMqiU9WvE8MjBOrO65Ac/edit
