@@ -2,9 +2,10 @@
 
 ## Requirements
 
-- [git lfs](https://git-lfs.github.com)
+Install [git lfs](https://git-lfs.github.com) to allow Git work
+with large files.
 
-## Main
+## Manuscript
 
 - [TODO][TODO] (Google Doc file)
 - [Manuscript][Manuscript] (Google Doc file)
