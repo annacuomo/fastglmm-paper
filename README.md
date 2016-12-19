@@ -2,14 +2,14 @@
 
 ## Requirements
 
-Install [git lfs](https://git-lfs.github.com) to allow Git work
+Install [git lfs](https://git-lfs.github.com) to allow Git to work
 with large files.
 
 ## Manuscript
 
-- [TODO][TODO] (Google Doc file)
 - [Manuscript][Manuscript] (Google Doc file)
 - [Figures](figures.key) (Keynote file)
+- [TODO][TODO] (Google Doc file)
 
 [TODO]: https://docs.google.com/document/d/1mDhirfAocMKSnjbefFEM5OWU6DWhoQlARX_NrqDh2Cg/edit
 [Manuscript]: https://docs.google.com/document/d/1HA6aKhNrYh5xW34g0gtqVkfE5v0E02rYISAQpojsRAM/edit
