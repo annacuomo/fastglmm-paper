@@ -1,5 +1,26 @@
 \section{Appendix}
 
+\begin{prop}\label{pr:kleq}
+  The KL divergences \eqref{eq:epkl0} and \eqref{eq:epkl1} are equal.
+\end{prop}
+
+% \begin{proof}
+%   \begin{align*}
+%       \KL{ p(y_i|f_i) &\pcav{i}{\f|\y} }{ \pep{y_i|f_i} \pcav{i}{\f|\y} }\\
+%           &=-\int p(y_i|f_i) \pcav{i}{\f|\y} \ln \left(
+%           \frac{\pep{y_i|f_i} \pcav{i}{\f|\y}}{p(y_i|f_i) \pcav{i}{\f|\y}} \right) d\f\\
+%           &=-\int p(y_i|f_i) \pcav{i}{\f|\y} \ln \left(\frac{\pep{y_i|f_i}}{p(y_i|f_i)}\right)d\f\\
+%           &=-\int p(y_i|f_i) \ln \left( \frac{\pep{y_i|f_i}}{p(y_i|f_i)} \right)
+%           \int \pcav{i}{\f|\y} d\f_{-i} df_i\\
+%           &=-\int p(y_i|f_i) \ln \left( \frac{\pep{y_i|f_i}}{p(y_i|f_i)} \right)
+%           \pcav{i}{f_i|\y} df_i\\
+%           &=-\int p(y_i|f_i) \pcav{i}{f_i|\y} \ln \left(
+%           \frac{\pep{y_i|f_i} \pcav{i}{f_i|\y}}{p(y_i|f_i) \pcav{i}{f_i|\y}} \right) df_i\\
+%           &= \KL{ p(y_i|f_i) \pcav{i}{f_i|\y} }{ \pep{y_i|f_i} \pcav{i}{f_i|\y} }
+%   \end{align*}
+%
+% \end{proof}
+
 \subsection{Probability distributions}
 
 \begin{table}[]

@@ -176,30 +176,53 @@ bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
 
 EP is a deterministic method for approximating probability distributions in
 order to solve complicated integrals as the one define in Eq. \eqref{eq:ml}.
-Here EP will replace a given likelihood p(y|z) from some exponential-family
-distribution by a non-normalized univariate Normal p.d.f
+Here it will replace a given exponential-family likelihood p(y|z) a
+non-normalized univariate Normal p.d.f
 \begin{align*}
   p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
 \end{align*}
 
-Of course, our problem requires many likelihoods (potentially defined by
-heterogenous distributions) together with a multivariate Normal distribution
-(Eqs. (3-4)). For convenience, let us define $\mathbf m = \mathrm A\T \balpha$
+An instance of our model requires many likelihoods (potentially defined by
+heterogenous distributions) together with a multivariate Normal distribution,
+Eq. \eqref{eq:ml}.
+For convenience, let us define $\mathbf m = \mathrm A\T \balpha$
 and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
-\mathrm I$. The EP approximation for our scenario is given by
+\mathrm I$.
+The EP approximation is thus given by
 \begin{align*}
-p(\mathbf y) = \prod_{i=1}^n p(y_i|z_i; \tilde \theta_i)_{\EP} \Normal{\mathbf z}{\mathbf m}{\mathrm K}
+p(\mathbf y)_{\text{EP}} = \int \prod_{i=1}^n p(y_i|z_i)_{\EP}
+  \Normal{\mathbf z}{\mathbf m}{\mathrm K} d\mathbf z.
 \end{align*}
-where $\tilde \theta_i = \{\tilde z_i, \tilde \mu_i, \tilde \sigma^2_i\}$.
 
-Cavity distribution is defined by
+Let
 \begin{align*}
-p_{-i}(z_i|\mathbf y) = \Normal{z_i}{\mu_i}{\sigma^2_i} \prod_{j\neq i} p(y_j|z_j)
+    p_{-i}(\mathbf z|\mathbf y) &= \prod_{j\neq i} p(y_j|z_j) p(\mathbf z)
+        \quad\text{ and}\\
+    \pcav{i}{\mathbf z|\mathbf y} &= \prod_{j\neq i} \pep{y_j|z_j} p(\mathbf z)
 \end{align*}
-and used into the minimization of the Kullback–Leibler divergence
+be the exact and EP cavity probabilities for the $i$-th individual.
+Ideally, we would like to minimize the
 \begin{align*}
-\mathrm{KL}[ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} || p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP}]
+    \KL{p(\mathbf z|\mathbf y)}{\pep{\mathbf z|\mathbf y}} =
+      \KL{ p(y_i|f_i) p_{-i}(\mathbf z|\mathbf y) }
+        { \pep{y_i|f_i} \pcav{i}{\mathbf z|\mathbf y} }
 \end{align*}
+divergence over the EP parameters in order to find the best approximation to
+$p(\mathbf y)$.
+Unfortunately, the above problem is intractable for large data sets.
+EP tackles the above problem by instead minimizing the
+\begin{align}\label{eq:epkl0}
+\KL{ p(y_i|z_i) p_{-i}(\mathbf z | \mathbf y)_{\EP} }{
+     p(y_i|z_i)_{\EP} p_{-i}(\mathbf z | \mathbf y)_{\EP} }
+\end{align}
+convergence for each $i$, repeating the process until convergence.
+Proposition (X) shows that the above minimization problem is equivalent to
+minimizing an univariate KL divergence:
+\begin{align}\label{eq:epkl1}
+\KL{ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} }{
+     p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP} }.
+\end{align}
+
 The minimum of that divergence will provide an update for the values of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
 \begin{align*}
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
