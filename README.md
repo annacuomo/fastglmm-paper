@@ -25,7 +25,7 @@ with large files.
 
 Clone the repository via
 ```bash
-git clone https://github.com/glimix/qep-paper.git
+git clone https://github.com/glimix/fastglmm-paper.git
 ```
 
 Enter into the `tr` folder and compile the pdf:
