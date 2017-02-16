@@ -6,8 +6,7 @@ The exponential-family distributions for standard GLMMs are defined as
 \begin{align*}
   y \sim \exp\{(y\theta - f_b(\theta))/f_a(\phi) + f_c(y, \phi)\}
 \end{align*}
-with two scalar paramaters $\theta$ and $\phi$ commonly regarded as XYZ and
-dispersion.
+with the canonical $\theta$ and dispersion $\phi$ parameters.
 The variable $y$ is naturally the outcome modelled by a distribution that
 emerges from the definition of the $f_{\cdot}(\cdot)$ functions and of the two
 parameters. As an example, the Bernoulli distribution with probability of
@@ -51,12 +50,12 @@ Moreover, we have now a connection between the latent space and the observed spa
 \begin{align*}
   p(y_i | z_i) = \expfam{y_i | \outcome_i, b'(\theta)=g^{-1}(z_i)}
 \end{align*}
-which fully describe the marginal likelihood
-\begin{align*}
+which fully describes the marginal likelihood
+\begin{align}\label{eq:ml}
   p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T
 	\balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
 	\mathrm I} \mathrm d \mathbf z \tag{5}
-\end{align*}
+\end{align}
 used in the maximum likelihood approach for parameter fitting.
 
 \subsection{Interpretation}
@@ -176,9 +175,9 @@ bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
 \subsection{Expectation Propagation}
 
 EP is a deterministic method for approximating probability distributions in
-order to solve complicated integrals as the one define in Eq. (5). Here EP will
-replace a given likelihood p(y|z) from some exponential-family distribution by a
-non-normalized univariate Normal p.d.f
+order to solve complicated integrals as the one define in Eq. \eqref{eq:ml}.
+Here EP will replace a given likelihood p(y|z) from some exponential-family
+distribution by a non-normalized univariate Normal p.d.f
 \begin{align*}
   p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
 \end{align*}
