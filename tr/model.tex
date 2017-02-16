@@ -17,15 +17,17 @@ a vector of stuff and a vector of random-effect sizes:
   b = \mathbf b\T \bbeta, \qquad \bbeta \sim \mathcal N(0, \sigma^2_{\beta})
 \end{align*}
 
+$b_s$
 Finally, the i.i.d. noise $\epsilon$ is normally distributed with variance
 $\sigma^2_{\epsilon}$. If we assume independence, $\mathrm E[\mathbf
-b_s] = 0$, and $\mathrm V[\mathbf b_2]=1/\sqrt{n_b}$, we have $\mathrm V[b] =
+b_s] = 0$ for $s \in \{1, \dots, n_b\}$, and
+$\mathrm V[\mathbf b_s]=1/\sqrt{n_b}$, we have $\mathrm V[b] =
 \sigma^2_{\beta}$ denoting the overall effect-size of the random component $b$.
 Knowing the values of $\boldsymbol\alpha$ and making analogous
 assumptions about the covariates leads to $\mathrm V[a]  =
 \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2$.
-Based upon $z$ (henceforth called underlying trait) we define genetic concepts
-as narrow-sense heritability
+We define genetic concepts as narrow-sense heritability
+Based upon $z$ (henceforth called underlying trait)
 
 \begin{align*}
   h^2=\frac{\sigma^2_{\beta}}{\sigma_t^2}, \qquad \sigma_t^2 =
