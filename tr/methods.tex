@@ -40,11 +40,11 @@ $\outcome=\{\outcome_i\}_1^n$, where each
 $\outcome_i = \{\theta_i, \phi_i, f_{a_i}(\cdot), f_{b_i}(\cdot), f_{c_i}(\cdot, \cdot), g_i(\cdot)\}$
 defines an (potentially distinct) exponential-family distribution and link
 function, we have
-$\mathbf z = \mathrm A\T\balpha + \mathrm B\T\bbeta + \bepsilon$
+$\mathbf z = \mathrm A\Tr\balpha + \mathrm B\Tr\bbeta + \bepsilon$
 multivariate distributed according to
 \begin{align*}
-  \mathbf z \sim \normal{\mathrm A\T \balpha}{\sigma^2_{\beta} \mathrm B\mathrm
-	B\T + \sigma^2_{\epsilon} \mathrm I}
+  \mathbf z \sim \normal{\mathrm A\Tr \balpha}{\sigma^2_{\beta} \mathrm B\mathrm
+	B\Tr + \sigma^2_{\epsilon} \mathrm I}
 \end{align*}
 Moreover, we have now a connection between the latent space and the observed space
 \begin{align*}
@@ -52,8 +52,8 @@ Moreover, we have now a connection between the latent space and the observed spa
 \end{align*}
 which fully describes the marginal likelihood
 \begin{align}\label{eq:ml}
-  p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\T
-	\balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
+  p(\mathbf y) = \int \prod_{i=1}^n p(y_i|z_i) \Normal{\mathbf z}{\mathrm A\Tr
+	\balpha}{\sigma^2_{\beta} \mathrm B\mathrm B\Tr + \sigma^2_{\epsilon}
 	\mathrm I} \mathrm d \mathbf z \tag{5}
 \end{align}
 used in the maximum likelihood approach for parameter fitting.
@@ -185,8 +185,8 @@ non-normalized univariate Normal p.d.f
 An instance of our model requires many likelihoods (potentially defined by
 heterogenous distributions) together with a multivariate Normal distribution
 as a prior, Eq. \eqref{eq:ml}.
-For convenience, let us define $\mathbf m = \mathrm A\T \balpha$
-and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
+For convenience, let us define $\mathbf m = \mathrm A\Tr \balpha$
+and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\Tr + \sigma^2_{\epsilon}
 \mathrm I$.
 The EP approximation is thus given by
 \begin{align*}
@@ -255,7 +255,7 @@ where $\bmu = \Sigma(\mathrm K^{-1} \mathbf m + \tilde\Sigma^{-1}\tilde\bmu)$ an
 
 The EP marginal log-likelihood is found by integrating $\mathbf z$ out of $p(\mathbf y, \mathbf z)_{\EP}$ which gives us
 \begin{align*}
-\log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mathrm K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\T(\mathrm K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
+\log p(\mathbf y)_{\EP} = -\frac{1}{2} \log |\mathrm K + \tilde \Sigma| - \frac{1}{2} (\mathbf m - \tilde\bmu)\Tr(\mathrm K + \tilde\Sigma)^{-1}(\mathbf m - \tilde\bmu) +\\
 \sum_i \log \hat z_i + \frac{1}{2} \sum_i \log(\tilde \sigma_i^2 + \sigma_{-i}^2) + \sum_i \frac{(\tilde \mu_i - \mu_{-i})^2}{2(\tilde \sigma_i^2 + \sigma_{-i}^2)}
 \end{align*}
 
@@ -285,19 +285,19 @@ reparametrized K above)
 \subsubsection{Derivation}
 
 \begin{align*}
-\Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathrm K
+\Sigma = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathrm K = \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\Tr \mathrm A_1) \mathrm K
 = \mathrm A_2 \mathrm K - \mathrm A_2 \mathrm Q
-          \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathrm K
+          \mathrm B^{-1}\mathrm Q\Tr \mathrm A_1 \mathrm K
 \end{align*}
 
 \begin{align*}
 \bmu = \tilde{\Sigma} (\tilde{\Sigma} + \mathrm K)^{-1} \mathbf m + \tilde{\Sigma} (\tilde{\Sigma} +
 \mathrm K)^{-1} \mathrm K \tilde{\boldsymbol\eta}
-= \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1) \mathbf m +
-\tilde{\Sigma}^{-1} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1)
+= \tilde{\Sigma} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\Tr \mathrm A_1) \mathbf m +
+\tilde{\Sigma}^{-1} (\mathrm A_1 - \mathrm A_1 \mathrm Q \mathrm B^{-1}\mathrm Q\Tr \mathrm A_1)
           \mathrm K \tilde{\boldsymbol \eta}\\
-= \mathrm A_2 \mathbf m - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T \mathrm A_1 \mathbf m
-         + \mathrm A_2 \mathrm K \tilde{\boldsymbol \eta} - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\T
+= \mathrm A_2 \mathbf m - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\Tr \mathrm A_1 \mathbf m
+         + \mathrm A_2 \mathrm K \tilde{\boldsymbol \eta} - \mathrm A_2 \mathrm Q \mathrm B^{-1}\mathrm Q\Tr
            \mathrm A_1 \mathrm K \tilde{\boldsymbol \eta}
 \end{align*}
 
