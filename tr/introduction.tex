@@ -1,16 +1,28 @@
 \section{Introduction}
 
-We aim to unify commonly performed analysis in the genetic analysis community such as heritability estimation, genome-wide association studies, phenotype prediction in a broad sense (e.g., disease risk prediction), variance decomposition, accounting for population structure and family relatedness, regressing out instrumental noise, and many others, in the sense that heteregenous traits from many different sorts of stochastic nature could be performed in a non-adhoc manner, with little to no human intervention (we are not talking about preprocessing here, which obviously will always require some considerable human intervention). This clearly could be accomplished by general-purpose Monte Carlo sampling methods but at the expense of restricting it to s	mall dataset. Contrarily, we are aiming for at least dozens of thousands individuals and genome-wide scale number of genetic markers which nowadays easily break hunder of millions point.
+We aim to unify commonly performed analysis in the genetic analysis community
+such as heritability estimation, genome-wide association studies (GWAS),
+phenotype prediction in a broad sense (e.g., disease risk prediction), variance
+decomposition, accounting for population structure and family relatedness, regressing
+out instrumental noise, and many others, in the sense that heterogeneous traits
+from many different sorts of stochastic nature could be performed in a
+non-\textit{ad hoc} manner, with little to no human intervention (we are not
+talking about preprocessing here, which obviously will always requires some
+considerable human intervention). This clearly could be accomplished by
+general-purpose Monte Carlo sampling methods but at the expense of restricting
+it to small datasets. Contrarily, we are aiming for at least dozens of thousands
+individuals and genome-wide scale numbers of genetic markers which nowadays
+easily break under a million points.
 
 The above will be accomplished by the following items:
 
 \begin{enumerate}
   \item Latent variable to model the genetic, environmental, and the covariate parts.
-  \item Family of distributions for tackling may sorts of trait nature
+  \item Family of distributions for tackling many sorts of trait nature
   \item Link function connecting the latent variable to the observed outcome
-  \item Fast method for integrating out nuisance parameters and to infer the one need for genetic analysis
+  \item Fast method for integrating out nuisance parameters and to infer the one needed for genetic analysis
   \item Convergence should be guaranteed without the need of human intervention
   \item A model that allows genetic analysis independently of the used outcome distribution
-  \item It should be able to handle different trait stochastic nature jointly
-  \item Afterall, the proposed method has to be empirically as accurate as Monte Carlo sampling methods
+  \item It should be able to handle different traits of stochastic nature jointly
+  \item After all, the proposed method has to be empirically as accurate as Monte Carlo sampling methods
 \end{enumerate}

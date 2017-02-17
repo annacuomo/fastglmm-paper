@@ -1,4 +1,4 @@
-\section{abstract}
+\section{Abstract}
 
 The development of computationally efficient yet accurate models has received
 considerable attention in statistical genetics. In particular linear mixed
@@ -9,15 +9,15 @@ multiple (related) traits.
 
 However, the vast majority of existing LMM approaches assume that phenotypes
 are continuous with Gaussian distributed residuals. This assumption is clearly
-violated in case/control studies but also in the context of a many
+violated in case/control studies but also in the context of many
 sequencing-based phenotypes, such as Poisson distributed read count data or
 traits defined as the Binomial ratio of (typically small) count values. While
-generalised linear mixed models provide in principle an established solution to
-this problem, "exact" methods for parameter inference require expensive MCMC
-simulations and hence are not applicable to large cohorts. Consequently,
-non-Gaussian observation likelihood are in practice either ignored or one is
-left with methods that provide crude approximations to estimate the trait on a
-latent liability scale.
+generalised linear mixed models (GLMMs) provide in principle an established
+solution to this problem, "exact" methods for parameter inference require
+expensive MCMC (Markov Chain Monte Carlo)simulations and hence are not applicable
+to large cohorts. Consequently, non-Gaussian observation likelihoods are in
+practice either ignored or one is left with methods that provide crude
+approximations to estimate the trait on a latent liability scale.
 
 To address this, we here propose a highly effective deterministic algorithm
 QEP-LMM that enables near-exact marginalising over the latent liability scale
@@ -33,4 +33,5 @@ methods. Remarkably, we observe that QEP-LMM achieves near-identical performance
 to exact MCMC approaches for generalised LMMs at a runtime complexity that is
 comparable to a standard LMM. Finally, we provide empirical results to
 demonstrate practical utility of QEP-LMM in applications to data from the WTCCC
-and in the genetic analysis of splicing phenotypes in human LCLs.
+(Wellcome Trust Case Control Consortium) and in the genetic analysis of splicing
+phenotypes in human LCLs (Lymphoblastoid Cell Lines).

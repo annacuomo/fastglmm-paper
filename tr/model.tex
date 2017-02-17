@@ -14,7 +14,7 @@ a vector of fixed-effect sizes:
 The random-effect is also defined by a dot-product but now between
 a vector of stuff and a vector of random-effect sizes:
 \begin{align*}
-  b = \mathbf b\Tr \bbeta, \qquad \bbeta \sim \mathcal N(0, \sigma^2_{\beta})
+  b = \mathbf b\Tr \bbeta, \qquad \bbeta \sim \mathcal N(0, \sigma^2_{\beta} \mathrm I)
 \end{align*}
 
 Finally, the i.i.d. noise $\epsilon$ is normally distributed with variance
@@ -28,18 +28,18 @@ assumptions about the covariates leads to $\mathrm V[a]  =
 \sum_{j=1}^{n_a} \alpha_j^2$.
 We define the narrow-sense heritability
 \begin{align*}
-  h^2=\frac{\sigma^2_{\beta}}{\sigma_t^2}, \text{where} \qquad \sigma_t^2 =
+  h^2=\frac{\sigma^2_{\beta}}{\sigma_t^2}, \qquad \text{where} \qquad \sigma_t^2 =
   \sum_{j=1}^{n_a} \boldsymbol \alpha_j^2 + \sigma^2_{\beta} +
   \sigma^2_{\epsilon}
 \end{align*}
 is the variance of $z$.
 
-The unobserved process we have described in Eq. \eqref{eq:lattrait} is assumed
+The unobserved process we have described in Eq.\eqref{eq:lattrait} is assumed
 to be directly associated with the observed one via a link function:
 \begin{align*}
   g(\mathrm E[y|z]) = z.
 \end{align*}
-If the distribution of $y$, give $z$, is completely defined by its
+If the distribution of $y$, given $z$, is completely defined by its
 expected value, we have now established the distribution of $y$ via
 $p(y) = \int p(y|z)p(z)dz$.
 Therefore the user is free to choose whatever distribution (conditioned on the
@@ -53,13 +53,13 @@ Fig. \ref{fig:gm} shows the corresponding graphical model representation.
 
 \subsection{Example}
 
-Let $y$ denotes the number of intron retentions out of $k$ mRNA reads.
+Let $y$ denote the number of intron retentions out of $k$ mRNA reads.
 One might regard $y$ as a Binomial random variable defined by $k$ number of
 trials and an unknown probability of success $r$.
 The relationship between $r$ and the genetic factors, environmental signal,
 and noise can be established via a link function $g(\cdot)$ such that
 $g(r)$ follows a latent process.
-Here, we define such an unobserved process via Eq. \eqref{eq:lattrait}.
+Here, we define such unobserved process via Eq. \eqref{eq:lattrait}.
 Precisely, we have
 \begin{align*}
   p(y) = \int \Binom{y}{k}{g(r) = z} \Normal{z}{a}{\sigma^2_\beta + \sigma^2_\epsilon} dz.
