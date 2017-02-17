@@ -176,15 +176,15 @@ bump as $p(\mathbf x)$ is an unnormalized exponential-family distribution.
 
 EP is a deterministic method for approximating probability distributions in
 order to solve complicated integrals as the one define in Eq. \eqref{eq:ml}.
-Here it will replace a given exponential-family likelihood p(y|z) a
+Here it will replace a given exponential-family likelihood $p(y|z)$ by a
 non-normalized univariate Normal p.d.f
 \begin{align*}
   p(y|z)_{\EP} = \tilde z \Normal{z}{\tilde \mu}{\tilde \sigma^2}
 \end{align*}
 
 An instance of our model requires many likelihoods (potentially defined by
-heterogenous distributions) together with a multivariate Normal distribution,
-Eq. \eqref{eq:ml}.
+heterogenous distributions) together with a multivariate Normal distribution
+as a prior, Eq. \eqref{eq:ml}.
 For convenience, let us define $\mathbf m = \mathrm A\T \balpha$
 and $\mathrm K = \sigma^2_{\beta} \mathrm B\mathrm B\T + \sigma^2_{\epsilon}
 \mathrm I$.
@@ -196,34 +196,58 @@ p(\mathbf y)_{\text{EP}} = \int \prod_{i=1}^n p(y_i|z_i)_{\EP}
 
 Let
 \begin{align*}
-    p_{-i}(\mathbf z|\mathbf y) &= \prod_{j\neq i} p(y_j|z_j) p(\mathbf z)
+    p_{-i}(\mathbf z|\mathbf y) &= \prod_{j\neq i} p(y_j|z_j) p(\mathbf z) / p(\mathbf y)
         \quad\text{ and}\\
-    \pcav{i}{\mathbf z|\mathbf y} &= \prod_{j\neq i} \pep{y_j|z_j} p(\mathbf z)
+    \pcav{i}{\mathbf z|\mathbf y} &= \prod_{j\neq i} \pep{y_j|z_j} p(\mathbf z) / \pep{\mathbf y}
 \end{align*}
 be the exact and EP cavity probabilities for the $i$-th individual.
 Ideally, we would like to minimize the
 \begin{align*}
     \KL{p(\mathbf z|\mathbf y)}{\pep{\mathbf z|\mathbf y}} =
-      \KL{ p(y_i|f_i) p_{-i}(\mathbf z|\mathbf y) }
-        { \pep{y_i|f_i} \pcav{i}{\mathbf z|\mathbf y} }
+      \KL{ p(y_i|z_i) p_{-i}(\mathbf z|\mathbf y) }
+        { \pep{y_i|z_i} \pcav{i}{\mathbf z|\mathbf y} }
 \end{align*}
 divergence over the EP parameters in order to find the best approximation to
-$p(\mathbf y)$.
-Unfortunately, the above problem is intractable for large data sets.
+$p(\mathbf y) \approx \int \pep{\mathbf y | \mathbf f} p(\mathbf f)$.
+Unfortunately, the above problem is intractable in practice.
 EP tackles the above problem by instead minimizing the
 \begin{align}\label{eq:epkl0}
 \KL{ p(y_i|z_i) p_{-i}(\mathbf z | \mathbf y)_{\EP} }{
      p(y_i|z_i)_{\EP} p_{-i}(\mathbf z | \mathbf y)_{\EP} }
 \end{align}
-convergence for each $i$, repeating the process until convergence.
-Proposition (X) shows that the above minimization problem is equivalent to
-minimizing an univariate KL divergence:
+divergence for each $i$, repeating the process until convergence.
+Proposition \eqref{pr:kleq} shows that the above minimization problem is
+equivalent to minimizing an univariate KL divergence
 \begin{align}\label{eq:epkl1}
 \KL{ p(y_i|z_i) p_{-i}(z_i | \mathbf y)_{\EP} }{
-     p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP} }.
+     p(y_i|z_i)_{\EP} p_{-i}(z_i | \mathbf y)_{\EP} },
 \end{align}
+which is amenable for numerical integration.
 
-The minimum of that divergence will provide an update for the values of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
+The minimum of the KL divergence \eqref{eq:epkl1} is attained when the
+right-hand side distribution has its zero-th, first, and second moments equal
+to the ones from the left-hand side. (CITATION)
+The approximated posterior can now be updated by plug the new
+$\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ values from the above minimization
+into
+\begin{gather}
+  \pep{\mathbf z| \mathbf y}
+    = \frac{\pep{\mathbf y|\mathbf z}p(\mathbf z)}{\pep{\mathbf y}} =
+      \Normal{\mathbf z}{\bmu}{\Sigma},\label{eq:pep}\\
+        \text{with } \bmu = \Sigma(\mathrm K^{-1} \mathbf m
+        + \tilde{\Sigma}^{-1} \tilde{\bmu})
+    \text{ and }
+    \Sigma = (\mathrm K^{-1} + \tilde{\Sigma}^{-1})^{-1},
+      ~~~~ \explain{Lemma \ref{le:gpr}}\nonumber
+\end{gather}
+
+
+ (TODO: refer to Proposition how to compute those).
+
+% p(\mathbf z|\mathbf y)
+
+The minimum of that divergence will provide an update for the values
+of $\tilde z_i, \tilde\mu_i, \tilde\sigma^2_i$ which will be then used to update the right-hand sife of
 \begin{align*}
 \frac{p(\mathbf y, \mathbf z)_{\EP}}{p(\mathbf y)_{\EP}} = \Normal{\mathbf z}{\bmu}{\Sigma}
 \end{align*}
